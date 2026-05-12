@@ -567,12 +567,11 @@ body{font-family:'Sarabun',sans-serif;background:#f0f4f8;min-height:100vh;font-s
       </div>
     </div>
     <div class="field"><label>สถานะงาน</label>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:6px 0 10px" id="jm-stat-grid">
-        <div class="stat-card" id="sc-wait" onclick="setStat('wait')"><span class="si">⏳</span><span class="sl">รอดำเนินการ</span></div>
+      <div class="status-grid" id="jm-stat-grid">
         <div class="stat-card s-prog" id="sc-prog" onclick="setStat('prog')"><span class="si">🔵</span><span class="sl">กำลังดำเนินการ</span></div>
         <div class="stat-card" id="sc-done" onclick="setStat('done')"><span class="si">🟢</span><span class="sl">เสร็จแล้ว</span></div>
         <div class="stat-card" id="sc-prob" onclick="setStat('prob')"><span class="si">🔴</span><span class="sl">ติดปัญหา</span></div>
-        <div class="stat-card" id="sc-chg" onclick="setStat('chg')" style="grid-column:span 2"><span class="si">🟡</span><span class="sl">มีการเปลี่ยนแปลง</span></div>
+        <div class="stat-card" id="sc-chg" onclick="setStat('chg')"><span class="si">🟡</span><span class="sl">มีการเปลี่ยนแปลง</span></div>
       </div>
     </div>
     <div class="field"><label>ปัญหา / หมายเหตุ</label><textarea id="jm-issue" style="min-height:48px"></textarea></div>
@@ -637,12 +636,7 @@ const SM = {
 };
 const SM_BY_KEY = {};
 Object.entries(SM).forEach(([k,v])=>SM_BY_KEY[v.statKey]=k);
-// Default fallback
-SM_BY_KEY["waiting"] = "wait";
-SM_BY_KEY["progress"] = "prog";
-SM_BY_KEY["done"] = "done";
-SM_BY_KEY["problem"] = "prob";
-SM_BY_KEY["change"] = "chg";
+SM_BY_KEY['waiting']='wait'; SM_BY_KEY['progress']='prog'; SM_BY_KEY['done']='done'; SM_BY_KEY['problem']='prob'; SM_BY_KEY['change']='chg';
 
 const JT_COLOR = {JOB:"#2563eb",MT:"#16a34a",NP:"#ca8a04",LEAVE:"#9333ea",OTHER:"#ca8a04"};
 
@@ -674,9 +668,9 @@ const dStr = d => { if(!d)return"-"; try{ return new Date(d+"T00:00:00").toLocal
 const findDept = n => { for(const[d,e] of Object.entries(EMPS)){ if(e.includes(n))return d; } return ""; };
 const findFull = k => { const kl=k.trim().toLowerCase(); return ALL_EMPS.find(e=>e.toLowerCase().includes(kl)||sn(e).toLowerCase().includes(kl))||k; };
 const alarm = jobs => {
-  if((jobs||[]).some(j=>j.status==="problem"))return"h";
-  if((jobs||[]).some(j=>j.status==="change"))return"m";
-  if((jobs||[]).some(j=>j.status==="waiting"))return"w";
+  if((jobs||[]).some(function(j){return j.status==="problem";}))return"h";
+  if((jobs||[]).some(function(j){return j.status==="change";}))return"m";
+  if((jobs||[]).some(function(j){return j.status==="waiting";}))return"w";
   return"ok";
 };
 const getTime = (hId,mId) => { const h=$(hId)?.value, m=$(mId)?.value; return(h&&m)?h+":"+m:""; };
@@ -802,6 +796,32 @@ function buildMyEmpSel(){
     ).join("");
 }
 
+
+function renderMyStatBtns(oid, ji, curStatus) {
+  var statList = [
+    {k:"waiting",  e:"⏳", l:"รอดำเนินการ",      ab:"#f3f4f6",ab2:"#6b7280",at:"#374151"},
+    {k:"progress", e:"🔵", l:"กำลังดำเนินการ",   ab:"#dbeafe",ab2:"#2563eb",at:"#1d4ed8"},
+    {k:"done",     e:"🟢", l:"เสร็จแล้ว",         ab:"#dcfce7",ab2:"#16a34a",at:"#15803d"},
+    {k:"problem",  e:"🔴", l:"ติดปัญหา",          ab:"#fee2e2",ab2:"#dc2626",at:"#b91c1c"},
+    {k:"change",   e:"🟡", l:"มีการเปลี่ยนแปลง", ab:"#fef9c3",ab2:"#ca8a04",at:"#854d0e"}
+  ];
+  var out = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:6px 0 10px">';
+  statList.forEach(function(s, i) {
+    var active = curStatus === s.k;
+    var spanStyle = i === 4 ? "grid-column:span 2;" : "";
+    var cardStyle = spanStyle + "border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;" +
+      (active ? "background:" + s.ab + ";border:2px solid " + s.ab2 + ";" : "background:#fff;border:2px solid #e2e8f0;");
+    var lblStyle = active ? "font-size:11px;font-weight:800;color:" + s.at : "font-size:11px;font-weight:700;color:#888";
+    var fn = "mySetStat(" + JSON.stringify(String(oid)) + "," + Number(ji) + "," + JSON.stringify(s.k) + ")";
+    out += "<div style='" + cardStyle + "' onclick='" + fn + "'>"
+      + "<span style='font-size:20px;display:block;margin-bottom:3px'>" + s.e + "</span>"
+      + "<span style='" + lblStyle + "'>" + s.l + "</span>"
+      + "</div>";
+  });
+  out += "</div>";
+  return out;
+}
+
 function loadMyWork(){
   const name=$("my-name")?.value;
   const date=$("my-date")?.value;
@@ -835,13 +855,7 @@ function loadMyWork(){
               </div>
             </div>
             <div style="font-size:10px;font-weight:700;color:#666;text-transform:uppercase;margin-bottom:6px">อัพเดทสถานะ:</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:6px 0 10px">
-              <div class="stat-card ${j.status==="waiting"?"":""}${j.status==="waiting"?"s-wait":""}" style="${j.status==="waiting"?"background:#f3f4f6;border-color:#6b7280;":""}" onclick="mySetStat('${o.id}',${ji},'waiting')"><span class="si">⏳</span><span class="sl" style="${j.status==="waiting"?"color:#374151;font-weight:800":"color:#888"}">รอดำเนินการ</span></div>
-              <div class="stat-card" style="${j.status==="progress"?"background:#dbeafe;border-color:#2563eb;":""}" onclick="mySetStat('${o.id}',${ji},'progress')"><span class="si">🔵</span><span class="sl" style="${j.status==="progress"?"color:#1d4ed8;font-weight:800":"color:#888"}">กำลังดำเนินการ</span></div>
-              <div class="stat-card" style="${j.status==="done"?"background:#dcfce7;border-color:#16a34a;":""}" onclick="mySetStat('${o.id}',${ji},'done')"><span class="si">🟢</span><span class="sl" style="${j.status==="done"?"color:#15803d;font-weight:800":"color:#888"}">เสร็จแล้ว</span></div>
-              <div class="stat-card" style="${j.status==="problem"?"background:#fee2e2;border-color:#dc2626;":""}" onclick="mySetStat('${o.id}',${ji},'problem')"><span class="si">🔴</span><span class="sl" style="${j.status==="problem"?"color:#b91c1c;font-weight:800":"color:#888"}">ติดปัญหา</span></div>
-              <div class="stat-card" style="grid-column:span 2;${j.status==="change"?"background:#fef9c3;border-color:#ca8a04;":""}" onclick="mySetStat('${o.id}',${ji},'change')"><span class="si">🟡</span><span class="sl" style="${j.status==="change"?"color:#854d0e;font-weight:800":"color:#888"}">มีการเปลี่ยนแปลง</span></div>
-            </div>
+            ${renderMyStatBtns(o.id, ji, j.status)}
             <div style="margin-bottom:9px">
               <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#666;margin-bottom:4px">
                 <span>% ความสำเร็จ</span>
@@ -864,12 +878,11 @@ function loadMyWork(){
 }
 
 function mySetStat(oid,ji,status){
-  const o=orders.find(x=>String(x.id)===String(oid));
+  var o=orders.find(function(x){return String(x.id)===String(oid);});
   if(!o||!o.jobs[ji])return;
   o.jobs[ji].status=status;
-  // Auto-set pct based on status
-  if(status==="done" && !o.jobs[ji].pct) o.jobs[ji].pct=100;
-  if(status==="waiting" && !o.jobs[ji].pct) o.jobs[ji].pct=0;
+  if(status==="done") o.jobs[ji].pct=100;
+  if(status==="waiting") o.jobs[ji].pct=0;
   loadMyWork();
 }
 function myPctChange(oid,ji,val){
@@ -877,34 +890,29 @@ function myPctChange(oid,ji,val){
   if(o&&o.jobs[ji])o.jobs[ji].pct=parseInt(val);
 }
 async function myJobSave(oid,ji){
-  const o=orders.find(x=>String(x.id)===String(oid));
-  if(!o){ alert("ไม่พบข้อมูลใบงาน"); return; }
-
-  // Get latest issue text
-  const issueEl=document.getElementById("myissue-"+oid+"-"+ji);
-  if(issueEl) o.jobs[ji].issue=issueEl.value;
-
-  // Get latest pct from slider
-  const pctEl=document.querySelector('[data-oid="'+oid+'"][data-ji="'+ji+'"]');
-  if(pctEl) o.jobs[ji].pct=parseInt(pctEl.value)||0;
-
-  // Timestamp
+  var o=orders.find(function(x){return String(x.id)===String(oid);});
+  if(!o){alert("ไม่พบข้อมูลใบงาน");return;}
+  var issueEl=document.getElementById("myissue-"+oid+"-"+ji);
+  if(issueEl)o.jobs[ji].issue=issueEl.value;
+  var pctEl=document.querySelector("[data-oid='"+oid+"'][data-ji='"+ji+"']");
+  if(pctEl)o.jobs[ji].pct=parseInt(pctEl.value)||0;
   o.jobs[ji].updatedAt=now();
   o.updatedAt=now();
-
   setSyncUI("syncing","กำลังบันทึก...");
   try{
     await saveOrder(o);
     loadMyWork();
-    // Refresh dashboard if it's visible
-    const dashView=document.getElementById("view-dash");
-    if(dashView && dashView.classList.contains("active")){
-      renderDash();
-    }
-    // Show brief success flash
-    const btn=document.querySelector('[onclick="myJobSave(''+oid+'','+ji+')"]');
-    if(btn){ const orig=btn.textContent; btn.textContent="✅ บันทึกแล้ว!"; btn.style.background="#16a34a"; setTimeout(()=>{btn.textContent=orig;btn.style.background="";},2000); }
-  }catch(e){ alert("บันทึกไม่สำเร็จ: "+e.message); }
+    // Flash save button
+  try{
+    var allBtns=document.querySelectorAll("button");
+    allBtns.forEach(function(b){
+      if(b.textContent.indexOf("บันทึกการอัพเดท")>=0 && b.getAttribute("onclick") && b.getAttribute("onclick").indexOf(String(oid))>=0){
+        var orig=b.textContent; b.textContent="✅ บันทึกแล้ว!"; b.style.background="#16a34a";
+        setTimeout(function(){b.textContent=orig;b.style.background="";},2000);
+      }
+    });
+  }catch(e2){}
+  }catch(e){alert("บันทึกไม่สำเร็จ: "+e.message);}
 }
 
 /* ======================== TEAM ======================== */
@@ -1068,19 +1076,23 @@ function openEditJobModal(idx){
 
 function setStat(k){
   currentStat=k;
-  const styleMap={
-    wait:"background:#f3f4f6;border-color:#6b7280;color:#374151",
-    prog:"background:#dbeafe;border-color:#2563eb;color:#1d4ed8",
-    done:"background:#dcfce7;border-color:#16a34a;color:#15803d",
-    prob:"background:#fee2e2;border-color:#dc2626;color:#b91c1c",
-    chg: "background:#fef9c3;border-color:#ca8a04;color:#854d0e"
+  var colorMap={
+    wait:{bg:"#f3f4f6",bc:"#6b7280"},
+    prog:{bg:"#dbeafe",bc:"#2563eb"},
+    done:{bg:"#dcfce7",bc:"#16a34a"},
+    prob:{bg:"#fee2e2",bc:"#dc2626"},
+    chg: {bg:"#fef9c3",bc:"#ca8a04"}
   };
-  Object.keys(SM).forEach(s=>{
-    const el=$("sc-"+s); if(!el)return;
+  Object.keys(SM).forEach(function(s){
+    var el=$("sc-"+s); if(!el)return;
     if(s===k){
-      el.setAttribute("style","border:2px solid;border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;transition:all .15s;"+styleMap[s]);
+      var c=colorMap[s]||{bg:"#f1f5f9",bc:"#888"};
+      el.style.background=c.bg;
+      el.style.borderColor=c.bc;
+      el.style.border="2px solid "+c.bc;
     } else {
-      el.setAttribute("style","border:2px solid #e2e8f0;border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;background:#fff;transition:all .15s;");
+      el.style.background="#fff";
+      el.style.border="2px solid #e2e8f0";
     }
   });
 }
@@ -1373,13 +1385,6 @@ function renderDash(){
   $("d-total").textContent=day.length;
   $("d-prob").textContent=day.filter(o=>alarm(o.jobs)==="h").length;
   $("d-chg").textContent=day.filter(o=>alarm(o.jobs)==="m").length;
-  // Count jobs by status for dashboard accuracy
-  let waitCount=0,progCount=0,doneCount=0;
-  day.forEach(o=>(o.jobs||[]).forEach(j=>{
-    if(j.status==="waiting")waitCount++;
-    else if(j.status==="progress")progCount++;
-    else if(j.status==="done")doneCount++;
-  }));
   let tp=0,tj=0;day.forEach(o=>(o.jobs||[]).forEach(j=>{tp+=j.pct||0;tj++;}));
   $("d-avg").textContent=(tj?Math.round(tp/tj):0)+"%";
 
@@ -1431,7 +1436,7 @@ function renderDash(){
         const bars=segs2.map(sg=>sg.v>0?`<div style="flex:${sg.v};height:100%;background:${sg.c}"></div>`:"").join("");
         const prodPct=pOf(ps.JOB+ps.MT,ph);
         const pc2=pct(prodPct);
-        const icon=alarm(o.jobs)==="h"?"🔴":alarm(o.jobs)==="m"?"🟡":alarm(o.jobs)==="w"?"⏳":"🟢";
+        const icon=alarm(o.jobs)==="h"?"🔴":alarm(o.jobs)==="m"?"🟡":"🟢";
         return`<div class="sb-row">
           <div class="sb-name">${icon} ${sn(o.name)}</div>
           <div class="sb-bar">${bars||'<div style="flex:1;background:#f1f5f9"></div>'}</div>
@@ -1451,7 +1456,7 @@ function renderDash(){
   if(wl)wl.innerHTML=day.map(o=>{
     let ep=0,ej=0;(o.jobs||[]).forEach(j=>{ep+=j.pct||0;ej++;});
     const avg=ej?Math.round(ep/ej):0;const pc2=pct(avg);
-    const icon=alarm(o.jobs)==="h"?"🔴":alarm(o.jobs)==="m"?"🟡":alarm(o.jobs)==="w"?"⏳":"🟢";
+    const icon=alarm(o.jobs)==="h"?"🔴":alarm(o.jobs)==="m"?"🟡":"🟢";
     return`<div class="wl-row">
       <div class="wl-name">${icon} ${sn(o.name)}</div>
       <div class="wl-bg"><div class="wl-fill" style="width:${avg}%;background:${pc2}"></div></div>
