@@ -65,6 +65,7 @@ body{font-family:'Sarabun',sans-serif;background:#f0f4f8;min-height:100vh;font-s
 
 /* STATUS BADGES */
 .sb{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
+.sb-wait{background:#f3f4f6;color:#374151}
 .sb-prog{background:#dbeafe;color:#1d4ed8}
 .sb-done{background:#dcfce7;color:#15803d}
 .sb-prob{background:#fee2e2;color:#b91c1c}
@@ -80,6 +81,7 @@ body{font-family:'Sarabun',sans-serif;background:#f0f4f8;min-height:100vh;font-s
 /* ALARM */
 .al-h{border-left:5px solid var(--r)!important}
 .al-m{border-left:5px solid var(--y)!important}
+.al-w{border-left:5px solid #9ca3af!important}
 .al-ok{border-left:5px solid var(--g)!important}
 
 /* TAGS */
@@ -565,11 +567,12 @@ body{font-family:'Sarabun',sans-serif;background:#f0f4f8;min-height:100vh;font-s
       </div>
     </div>
     <div class="field"><label>สถานะงาน</label>
-      <div class="status-grid" id="jm-stat-grid">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:6px 0 10px" id="jm-stat-grid">
+        <div class="stat-card" id="sc-wait" onclick="setStat('wait')"><span class="si">⏳</span><span class="sl">รอดำเนินการ</span></div>
         <div class="stat-card s-prog" id="sc-prog" onclick="setStat('prog')"><span class="si">🔵</span><span class="sl">กำลังดำเนินการ</span></div>
         <div class="stat-card" id="sc-done" onclick="setStat('done')"><span class="si">🟢</span><span class="sl">เสร็จแล้ว</span></div>
         <div class="stat-card" id="sc-prob" onclick="setStat('prob')"><span class="si">🔴</span><span class="sl">ติดปัญหา</span></div>
-        <div class="stat-card" id="sc-chg" onclick="setStat('chg')"><span class="si">🟡</span><span class="sl">มีการเปลี่ยนแปลง</span></div>
+        <div class="stat-card" id="sc-chg" onclick="setStat('chg')" style="grid-column:span 2"><span class="si">🟡</span><span class="sl">มีการเปลี่ยนแปลง</span></div>
       </div>
     </div>
     <div class="field"><label>ปัญหา / หมายเหตุ</label><textarea id="jm-issue" style="min-height:48px"></textarea></div>
@@ -626,13 +629,20 @@ const JOB_DB = {
 };
 
 const SM = {
-  prog:{label:"กำลังดำเนินการ",cls:"sb-prog",color:"#2563eb",icon:"🔵",statKey:"progress"},
-  done:{label:"เสร็จแล้ว",     cls:"sb-done",color:"#16a34a",icon:"🟢",statKey:"done"},
-  prob:{label:"ติดปัญหา",      cls:"sb-prob",color:"#dc2626",icon:"🔴",statKey:"problem"},
-  chg: {label:"มีการเปลี่ยนแปลง",cls:"sb-chg",color:"#ca8a04",icon:"🟡",statKey:"change"}
+  wait:{label:"รอดำเนินการ",       cls:"sb-wait",color:"#6b7280",icon:"⏳",statKey:"waiting"},
+  prog:{label:"กำลังดำเนินการ",    cls:"sb-prog",color:"#2563eb",icon:"🔵",statKey:"progress"},
+  done:{label:"เสร็จแล้ว",         cls:"sb-done",color:"#16a34a",icon:"🟢",statKey:"done"},
+  prob:{label:"ติดปัญหา",          cls:"sb-prob",color:"#dc2626",icon:"🔴",statKey:"problem"},
+  chg: {label:"มีการเปลี่ยนแปลง", cls:"sb-chg", color:"#ca8a04",icon:"🟡",statKey:"change"}
 };
 const SM_BY_KEY = {};
 Object.entries(SM).forEach(([k,v])=>SM_BY_KEY[v.statKey]=k);
+// Default fallback
+SM_BY_KEY["waiting"] = "wait";
+SM_BY_KEY["progress"] = "prog";
+SM_BY_KEY["done"] = "done";
+SM_BY_KEY["problem"] = "prob";
+SM_BY_KEY["change"] = "chg";
 
 const JT_COLOR = {JOB:"#2563eb",MT:"#16a34a",NP:"#ca8a04",LEAVE:"#9333ea",OTHER:"#ca8a04"};
 
@@ -666,6 +676,7 @@ const findFull = k => { const kl=k.trim().toLowerCase(); return ALL_EMPS.find(e=
 const alarm = jobs => {
   if((jobs||[]).some(j=>j.status==="problem"))return"h";
   if((jobs||[]).some(j=>j.status==="change"))return"m";
+  if((jobs||[]).some(j=>j.status==="waiting"))return"w";
   return"ok";
 };
 const getTime = (hId,mId) => { const h=$(hId)?.value, m=$(mId)?.value; return(h&&m)?h+":"+m:""; };
@@ -824,11 +835,12 @@ function loadMyWork(){
               </div>
             </div>
             <div style="font-size:10px;font-weight:700;color:#666;text-transform:uppercase;margin-bottom:6px">อัพเดทสถานะ:</div>
-            <div class="status-grid">
-              <div class="stat-card ${j.status==="progress"?"s-prog":""}" onclick="mySetStat('${o.id}',${ji},'progress')"><span class="si">🔵</span><span class="sl">กำลังดำเนินการ</span></div>
-              <div class="stat-card ${j.status==="done"?"s-done":""}" onclick="mySetStat('${o.id}',${ji},'done')"><span class="si">🟢</span><span class="sl">เสร็จแล้ว</span></div>
-              <div class="stat-card ${j.status==="problem"?"s-prob":""}" onclick="mySetStat('${o.id}',${ji},'problem')"><span class="si">🔴</span><span class="sl">ติดปัญหา</span></div>
-              <div class="stat-card ${j.status==="change"?"s-chg":""}" onclick="mySetStat('${o.id}',${ji},'change')"><span class="si">🟡</span><span class="sl">เปลี่ยนแปลง</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:6px 0 10px">
+              <div class="stat-card ${j.status==="waiting"?"":""}${j.status==="waiting"?"s-wait":""}" style="${j.status==="waiting"?"background:#f3f4f6;border-color:#6b7280;":""}" onclick="mySetStat('${o.id}',${ji},'waiting')"><span class="si">⏳</span><span class="sl" style="${j.status==="waiting"?"color:#374151;font-weight:800":"color:#888"}">รอดำเนินการ</span></div>
+              <div class="stat-card" style="${j.status==="progress"?"background:#dbeafe;border-color:#2563eb;":""}" onclick="mySetStat('${o.id}',${ji},'progress')"><span class="si">🔵</span><span class="sl" style="${j.status==="progress"?"color:#1d4ed8;font-weight:800":"color:#888"}">กำลังดำเนินการ</span></div>
+              <div class="stat-card" style="${j.status==="done"?"background:#dcfce7;border-color:#16a34a;":""}" onclick="mySetStat('${o.id}',${ji},'done')"><span class="si">🟢</span><span class="sl" style="${j.status==="done"?"color:#15803d;font-weight:800":"color:#888"}">เสร็จแล้ว</span></div>
+              <div class="stat-card" style="${j.status==="problem"?"background:#fee2e2;border-color:#dc2626;":""}" onclick="mySetStat('${o.id}',${ji},'problem')"><span class="si">🔴</span><span class="sl" style="${j.status==="problem"?"color:#b91c1c;font-weight:800":"color:#888"}">ติดปัญหา</span></div>
+              <div class="stat-card" style="grid-column:span 2;${j.status==="change"?"background:#fef9c3;border-color:#ca8a04;":""}" onclick="mySetStat('${o.id}',${ji},'change')"><span class="si">🟡</span><span class="sl" style="${j.status==="change"?"color:#854d0e;font-weight:800":"color:#888"}">มีการเปลี่ยนแปลง</span></div>
             </div>
             <div style="margin-bottom:9px">
               <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#666;margin-bottom:4px">
@@ -853,7 +865,12 @@ function loadMyWork(){
 
 function mySetStat(oid,ji,status){
   const o=orders.find(x=>String(x.id)===String(oid));
-  if(o&&o.jobs[ji]){ o.jobs[ji].status=status; loadMyWork(); }
+  if(!o||!o.jobs[ji])return;
+  o.jobs[ji].status=status;
+  // Auto-set pct based on status
+  if(status==="done" && !o.jobs[ji].pct) o.jobs[ji].pct=100;
+  if(status==="waiting" && !o.jobs[ji].pct) o.jobs[ji].pct=0;
+  loadMyWork();
 }
 function myPctChange(oid,ji,val){
   const o=orders.find(x=>String(x.id)===String(oid));
@@ -862,13 +879,31 @@ function myPctChange(oid,ji,val){
 async function myJobSave(oid,ji){
   const o=orders.find(x=>String(x.id)===String(oid));
   if(!o){ alert("ไม่พบข้อมูลใบงาน"); return; }
-  const issueEl=$(`myissue-${oid}-${ji}`);
-  if(issueEl)o.jobs[ji].issue=issueEl.value;
+
+  // Get latest issue text
+  const issueEl=document.getElementById("myissue-"+oid+"-"+ji);
+  if(issueEl) o.jobs[ji].issue=issueEl.value;
+
+  // Get latest pct from slider
+  const pctEl=document.querySelector('[data-oid="'+oid+'"][data-ji="'+ji+'"]');
+  if(pctEl) o.jobs[ji].pct=parseInt(pctEl.value)||0;
+
+  // Timestamp
   o.jobs[ji].updatedAt=now();
   o.updatedAt=now();
+
+  setSyncUI("syncing","กำลังบันทึก...");
   try{
     await saveOrder(o);
     loadMyWork();
+    // Refresh dashboard if it's visible
+    const dashView=document.getElementById("view-dash");
+    if(dashView && dashView.classList.contains("active")){
+      renderDash();
+    }
+    // Show brief success flash
+    const btn=document.querySelector('[onclick="myJobSave(''+oid+'','+ji+')"]');
+    if(btn){ const orig=btn.textContent; btn.textContent="✅ บันทึกแล้ว!"; btn.style.background="#16a34a"; setTimeout(()=>{btn.textContent=orig;btn.style.background="";},2000); }
   }catch(e){ alert("บันทึกไม่สำเร็จ: "+e.message); }
 }
 
@@ -1033,9 +1068,20 @@ function openEditJobModal(idx){
 
 function setStat(k){
   currentStat=k;
+  const styleMap={
+    wait:"background:#f3f4f6;border-color:#6b7280;color:#374151",
+    prog:"background:#dbeafe;border-color:#2563eb;color:#1d4ed8",
+    done:"background:#dcfce7;border-color:#16a34a;color:#15803d",
+    prob:"background:#fee2e2;border-color:#dc2626;color:#b91c1c",
+    chg: "background:#fef9c3;border-color:#ca8a04;color:#854d0e"
+  };
   Object.keys(SM).forEach(s=>{
     const el=$("sc-"+s); if(!el)return;
-    el.className="stat-card"+(s===k?" s-"+s:"");
+    if(s===k){
+      el.setAttribute("style","border:2px solid;border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;transition:all .15s;"+styleMap[s]);
+    } else {
+      el.setAttribute("style","border:2px solid #e2e8f0;border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;background:#fff;transition:all .15s;");
+    }
   });
 }
 
@@ -1140,8 +1186,8 @@ function renderList(){
   if(!filtered.length){ el.innerHTML='<div style="text-align:center;padding:28px;color:#aaa;font-size:13px">📭 ไม่มีใบงาน</div>'; return; }
   el.innerHTML=filtered.map(o=>{
     const al=alarm(o.jobs);
-    const alCls=al==="h"?"al-h":al==="m"?"al-m":"al-ok";
-    const alBadge=al==="h"?'<span class="tag tag-r">🚨 เร่งด่วน</span>':al==="m"?'<span class="tag tag-y">⚠️ แจ้งเตือน</span>':'<span class="tag tag-g">✅ ปกติ</span>';
+    const alCls=al==="h"?"al-h":al==="m"?"al-m":al==="w"?"al-w":"al-ok";
+    const alBadge=al==="h"?'<span class="tag tag-r">🚨 เร่งด่วน</span>':al==="m"?'<span class="tag tag-y">⚠️ แจ้งเตือน</span>':al==="w"?'<span class="tag" style="background:#f3f4f6;color:#374151">⏳ รอดำเนินการ</span>':'<span class="tag tag-g">✅ ปกติ</span>';
     const rows=(o.jobs||[]).map(j=>{
       const sk=SM_BY_KEY[j.status]||"prog";
       const s=SM[sk]; const h=calcH(j.start,j.end); const pc2=pct(j.pct||0);
@@ -1327,6 +1373,13 @@ function renderDash(){
   $("d-total").textContent=day.length;
   $("d-prob").textContent=day.filter(o=>alarm(o.jobs)==="h").length;
   $("d-chg").textContent=day.filter(o=>alarm(o.jobs)==="m").length;
+  // Count jobs by status for dashboard accuracy
+  let waitCount=0,progCount=0,doneCount=0;
+  day.forEach(o=>(o.jobs||[]).forEach(j=>{
+    if(j.status==="waiting")waitCount++;
+    else if(j.status==="progress")progCount++;
+    else if(j.status==="done")doneCount++;
+  }));
   let tp=0,tj=0;day.forEach(o=>(o.jobs||[]).forEach(j=>{tp+=j.pct||0;tj++;}));
   $("d-avg").textContent=(tj?Math.round(tp/tj):0)+"%";
 
@@ -1378,7 +1431,7 @@ function renderDash(){
         const bars=segs2.map(sg=>sg.v>0?`<div style="flex:${sg.v};height:100%;background:${sg.c}"></div>`:"").join("");
         const prodPct=pOf(ps.JOB+ps.MT,ph);
         const pc2=pct(prodPct);
-        const icon=alarm(o.jobs)==="h"?"🔴":alarm(o.jobs)==="m"?"🟡":"🟢";
+        const icon=alarm(o.jobs)==="h"?"🔴":alarm(o.jobs)==="m"?"🟡":alarm(o.jobs)==="w"?"⏳":"🟢";
         return`<div class="sb-row">
           <div class="sb-name">${icon} ${sn(o.name)}</div>
           <div class="sb-bar">${bars||'<div style="flex:1;background:#f1f5f9"></div>'}</div>
@@ -1398,7 +1451,7 @@ function renderDash(){
   if(wl)wl.innerHTML=day.map(o=>{
     let ep=0,ej=0;(o.jobs||[]).forEach(j=>{ep+=j.pct||0;ej++;});
     const avg=ej?Math.round(ep/ej):0;const pc2=pct(avg);
-    const icon=alarm(o.jobs)==="h"?"🔴":alarm(o.jobs)==="m"?"🟡":"🟢";
+    const icon=alarm(o.jobs)==="h"?"🔴":alarm(o.jobs)==="m"?"🟡":alarm(o.jobs)==="w"?"⏳":"🟢";
     return`<div class="wl-row">
       <div class="wl-name">${icon} ${sn(o.name)}</div>
       <div class="wl-bg"><div class="wl-fill" style="width:${avg}%;background:${pc2}"></div></div>
