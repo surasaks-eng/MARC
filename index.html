@@ -290,10 +290,10 @@ textarea.fi{resize:vertical;min-height:50px}
     <div class="ct">📁 ฐานข้อมูลเลขงาน / ลูกค้า</div>
     <p style="font-size:11px;color:#666;margin-bottom:10px">เพิ่มเลขงานและลูกค้าที่นี่ เพื่อให้เลือกได้อัตโนมัติในหน้าสั่งงาน</p>
     <div class="r2">
-      <div class="field"><label>เลขงาน</label><input id="jdb-no" class="fi" placeholder="212600012"></div>
-      <div class="field"><label>ลูกค้า / สถานที่</label><input id="jdb-cust" class="fi" placeholder="IRPC"></div>
+      <div class="field"><label>เลขงาน</label><input id="jdb-no" class="fi"></div>
+      <div class="field"><label>ลูกค้า / สถานที่</label><input id="jdb-cust" class="fi"></div>
     </div>
-    <div class="field"><label>คำอธิบายงาน (ไม่บังคับ)</label><input id="jdb-desc" class="fi" placeholder="Recheck alignment..."></div>
+    <div class="field"><label>คำอธิบายงาน (ไม่บังคับ)</label><input id="jdb-desc" class="fi"></div>
     <button class="btn btn-o btn-full" onclick="addJobDB()">+ เพิ่มเข้าฐานข้อมูล</button>
   </div>
   <div class="card">
@@ -322,10 +322,10 @@ textarea.fi{resize:vertical;min-height:50px}
       </div>
     </div>
     <div class="r2">
-      <div class="field"><label>เลขงาน (พิมพ์เอง)</label><input id="t-no" class="fi" placeholder="212600012" oninput="onJobNoInput('t-no','t-cust')"></div>
-      <div class="field"><label>ลูกค้า / สถานที่</label><input id="t-cust" class="fi" placeholder="IRPC"></div>
+      <div class="field"><label>เลขงาน (พิมพ์เอง)</label><input id="t-no" class="fi" oninput="onJobNoInput('t-no','t-cust')"></div>
+      <div class="field"><label>ลูกค้า / สถานที่</label><input id="t-cust" class="fi"></div>
     </div>
-    <div class="field"><label>รายละเอียดงาน</label><textarea id="t-desc" class="fi" style="min-height:55px" placeholder="อธิบายงาน..."></textarea></div>
+    <div class="field"><label>รายละเอียดงาน</label><textarea id="t-desc" class="fi" style="min-height:55px"></textarea></div>
     <div class="r3">
       <div class="field"><label>วันที่</label><input type="date" id="t-date" class="fi"></div>
       <div class="field"><label>เริ่ม</label>
@@ -335,7 +335,7 @@ textarea.fi{resize:vertical;min-height:50px}
         <div class="tsel"><select id="t-eh" class="fi"><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span class="tsep">:</span><select id="t-em" class="fi"><option value="00">00</option><option value="15">15</option><option value="30">30</option><option value="45">45</option></select></div>
       </div>
     </div>
-    <div class="field"><label>หมายเหตุ / รถที่ใช้</label><input id="t-note" class="fi" placeholder="กระบะ 2 คัน"></div>
+    <div class="field"><label>หมายเหตุ / รถที่ใช้</label><input id="t-note" class="fi"></div>
   </div>
   <div class="card">
     <div class="ct">👥 เลือกพนักงาน <span class="sel-cnt" id="t-cnt">0</span></div>
@@ -364,7 +364,7 @@ textarea.fi{resize:vertical;min-height:50px}
       <div class="field"><label>ชื่อ-นามสกุล</label><select id="f-name" class="fi"><option value="">-- เลือก --</option></select></div>
     </div>
     <div class="r3">
-      <div class="field"><label>รหัสพนักงาน</label><input id="f-empid" class="fi" placeholder="EMP001"></div>
+      <div class="field"><label>รหัสพนักงาน</label><input id="f-empid" class="fi"></div>
       <div class="field"><label>ประเภทพนักงาน</label>
         <select id="f-etype" class="fi"><option>Permanent</option><option>Contract</option><option>Trainee</option></select>
       </div>
@@ -383,7 +383,7 @@ textarea.fi{resize:vertical;min-height:50px}
     <div style="display:flex;gap:6px;flex-wrap:wrap" id="f-pills"></div>
   </div>
   <div class="card"><div class="ct">หมายเหตุ</div>
-    <div class="field"><textarea id="f-note" class="fi" placeholder="หมายเหตุ / รถที่ใช้..."></textarea></div>
+    <div class="field"><textarea id="f-note" class="fi"></textarea></div>
   </div>
   <button class="btn btn-o btn-full" onclick="saveOne()">💾 บันทึกใบสั่งงาน</button>
 </div>
@@ -419,10 +419,10 @@ textarea.fi{resize:vertical;min-height:50px}
       </div>
     </div>
     <div class="r2">
-      <div class="field"><label>เลขงาน</label><input id="ot-no" class="fi" placeholder="212600012"></div>
-      <div class="field"><label>ลูกค้า / สถานที่</label><input id="ot-cust" class="fi" placeholder="IRPC"></div>
+      <div class="field"><label>เลขงาน</label><input id="ot-no" class="fi"></div>
+      <div class="field"><label>ลูกค้า / สถานที่</label><input id="ot-cust" class="fi"></div>
     </div>
-    <div class="field"><label>รายละเอียดงาน OT</label><textarea id="ot-desc" class="fi" style="min-height:55px" placeholder="งานที่ต้องทำใน OT..."></textarea></div>
+    <div class="field"><label>รายละเอียดงาน OT</label><textarea id="ot-desc" class="fi" style="min-height:55px"></textarea></div>
     <div class="r2">
       <div class="field"><label>เวลาเริ่ม OT</label>
         <div class="tsel"><select id="ot-sh" class="fi"><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span class="tsep">:</span><select id="ot-sm" class="fi"><option value="00">00</option><option value="15">15</option><option value="30">30</option><option value="45">45</option></select></div>
@@ -431,7 +431,7 @@ textarea.fi{resize:vertical;min-height:50px}
         <div class="tsel"><select id="ot-eh" class="fi"><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span class="tsep">:</span><select id="ot-em" class="fi"><option value="00">00</option><option value="15">15</option><option value="30">30</option><option value="45">45</option></select></div>
       </div>
     </div>
-    <div class="field"><label>เหตุผลที่ต้องทำ OT</label><textarea id="ot-reason" class="fi" style="min-height:55px" placeholder="ระบุเหตุผล..."></textarea></div>
+    <div class="field"><label>เหตุผลที่ต้องทำ OT</label><textarea id="ot-reason" class="fi" style="min-height:55px"></textarea></div>
     <div style="background:#fce7f3;border:1px solid #f9a8d4;border-radius:8px;padding:9px;margin-bottom:8px;font-size:11px;color:#9d174d">
       <b>⏰ เวลาปกติ:</b> 07:00 – 16:00 น. (พัก 11:00 – 11:59 น.)<br>
       <b>OT</b> คือเวลาที่เกินจาก 16:00 น. หรือก่อน 07:00 น.
@@ -462,7 +462,12 @@ textarea.fi{resize:vertical;min-height:50px}
       </div>
       <div style="display:flex;gap:6px;margin-bottom:9px">
         <select id="ot-flt-date" class="fi" style="flex:1;font-size:11px" onchange="loadOTApprove()"><option value="">ทุกวัน</option></select>
-        <select id="ot-flt-stat" class="fi" style="flex:1;font-size:11px" onchange="loadOTApprove()"><option value="">ทุกสถานะ</option><option value="pending">รอพิจารณา</option><option value="approved">อนุมัติแล้ว</option><option value="rejected">ไม่อนุมัติ</option></select>
+        <select id="ot-flt-stat" class="fi" style="flex:1;font-size:11px" onchange="loadOTApprove()">
+          <option value="">ทุกสถานะ</option>
+          <option value="pending">รอพิจารณา</option>
+          <option value="approved">อนุมัติแล้ว</option>
+          <option value="rejected">ไม่อนุมัติ</option>
+        </select>
         <button onclick="loadOTApprove()" class="btn btn-g" style="padding:6px 9px;font-size:11px">รีเฟรช</button>
       </div>
       <div id="ot-apv-sum" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px"></div>
@@ -478,7 +483,7 @@ textarea.fi{resize:vertical;min-height:50px}
     <p style="font-size:11px;color:#666;margin-bottom:10px;line-height:1.7">วางข้อความสั่งงาน ระบบจะอ่านและสร้างใบงานอัตโนมัติ</p>
     <div class="field"><label>วันที่ปฏิบัติงาน</label><input type="date" id="ai-date" class="fi"></div>
     <div class="field"><label>วางข้อความสั่งงาน</label>
-      <textarea id="ai-txt" class="fi" style="min-height:130px;font-size:12px;line-height:1.7" placeholder="1) 212600012 IRPC Recheck alignment...&#10;รายชื่อ : ธงชาติ , นารินทร์&#10;รถที่ใช้ : กระบะ"></textarea>
+      <textarea id="ai-txt" class="fi" style="min-height:130px;font-size:12px;line-height:1.7"></textarea>
     </div>
     <button class="btn btn-o btn-full" id="ai-btn" onclick="runAI()">🤖 ให้ AI อ่านและสร้างใบงาน</button>
   </div>
@@ -618,7 +623,7 @@ textarea.fi{resize:vertical;min-height:50px}
         <button class="fb-btn" id="fbt-other" onclick="setFbType('other')">💡 ข้อเสนอแนะ</button>
       </div>
     </div>
-    <div class="field"><label>รายละเอียด</label><textarea id="fb-detail" class="fi" style="min-height:75px" placeholder="อธิบายปัญหา..."></textarea></div>
+    <div class="field"><label>รายละเอียด</label><textarea id="fb-detail" class="fi" style="min-height:75px"></textarea></div>
     <div class="field"><label>ระดับความสำคัญ</label>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:3px">
         <button class="fb-btn" id="prio-low" onclick="setPrio('low')">🟢 ต่ำ</button>
@@ -657,8 +662,8 @@ textarea.fi{resize:vertical;min-height:50px}
       </div>
     </div>
     <div class="r2">
-      <div class="field"><label>เลขงาน</label><input id="jm-no" class="fi" placeholder="212600012" oninput="onJobNoInput('jm-no','jm-cust')"></div>
-      <div class="field"><label>ลูกค้า / สถานที่</label><input id="jm-cust" class="fi" placeholder="IRPC"></div>
+      <div class="field"><label>เลขงาน</label><input id="jm-no" class="fi" oninput="onJobNoInput('jm-no','jm-cust')"></div>
+      <div class="field"><label>ลูกค้า / สถานที่</label><input id="jm-cust" class="fi"></div>
     </div>
     <div class="field"><label>รายละเอียด</label><textarea id="jm-desc" class="fi" style="min-height:58px"></textarea></div>
     <div class="r2">
@@ -863,10 +868,10 @@ function refreshCurrentTab(){
   var t=tabs[idx];
   if(t==="list") renderList();
   else if(t==="dash") renderDash();
-  else if(t==="my") loadMyWork();
+  else if(t==="my"){ var ne=$("my-name"); if(ne) ne.value=""; var le=$("my-list"); if(le) le.innerHTML='<div style="text-align:center;padding:30px;color:#aaa;font-size:13px">&#x1F446; เลือกชื่อของคุณด้านบน</div>'; }
   else if(t==="ws") renderWS();
   else if(t==="print") renderPrintSelect();
-  else if(t==="ot") loadOTList();
+  else if(t==="ot"){ loadOTEmps(); swOT(0); refreshJobSelects(); }
 }
 
 /* ---------- DATE LIMITS ---------- */
@@ -891,7 +896,7 @@ function sw(t){
   else if(t==="dash"){ $("dash-date").value=todayStr(); renderDash(); }
   else if(t==="print") renderPrintSelect();
   else if(t==="team") renderTeamPicker();
-  else if(t==="my") loadMyWork();
+  else if(t==="my"){ var ne=$("my-name"); if(ne) ne.value=""; var le=$("my-list"); if(le) le.innerHTML='<div style="text-align:center;padding:30px;color:#aaa;font-size:13px">&#x1F446; เลือกชื่อของคุณด้านบน</div>'; }
   else if(t==="ws"){ $("ws-date").value=todayStr(); renderWS(); }
   else if(t==="fb"){ buildFbEmps(); loadFb(); }
   else if(t==="ot"){ loadOTEmps(); swOT(0); refreshJobSelects(); }
@@ -971,6 +976,7 @@ function buildMyEmpSel(){
 function onMyNameChange(){
   var name=$("my-name").value;
   if(!name){ $("my-list").innerHTML='<div style="text-align:center;padding:30px;color:#aaa;font-size:13px">👆 เลือกชื่อของคุณด้านบน</div>'; return; }
+  startPresence(name);
   $("my-date").value=todayStr();
   loadMyWork();
 }
@@ -999,8 +1005,7 @@ function loadMyWork(){
         var span2=si===4?"grid-column:span 2;":"";
         var style=span2+(active?"background:"+s.bg+";border:2px solid "+s.bc+";":"background:#fff;border:2px solid #e2e8f0;"  )+"border-radius:10px;padding:9px 7px;text-align:center;cursor:pointer;";
         var lStyle=active?"font-size:10px;font-weight:800;color:"+s.tc:"font-size:10px;font-weight:700;color:#888";
-        var fn="mySetStat('"+o.id+"',"+ji+",'"+s.sk+"')";
-        return "<div style='"+style+"' onclick='"+fn+"'><span style='font-size:18px;display:block;margin-bottom:2px'>"+s.e+"</span><span style='"+lStyle+"'>"+s.l+"</span></div>";
+        return "<div style='"+style+"' data-oid='"+o.id+"' data-ji='"+ji+"' data-sk='"+s.sk+"' onclick='myStatClick(this)'><span style='font-size:18px;display:block;margin-bottom:2px'>"+s.e+"</span><span style='"+lStyle+"'>"+s.l+"</span></div>";
       }).join("");
       return '<div style="padding:11px 12px;border-bottom:1px solid #f8fafc">'
         +'<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700"><span class="jt jt-'+(j.jobtype||"JOB")+'">'+(j.jobtype||"JOB")+'</span>'+( j.no?j.no:""  )+(j.machine?' <span style="color:#888;font-weight:400">— '+j.machine+'</span>':"")+'</div>'
@@ -1008,6 +1013,7 @@ function loadMyWork(){
         +'<div style="font-size:10px;color:#888;margin-top:2px">⏰ '+(j.start||"-")+(j.end?" → "+j.end:"")+'</div></div>'
         +'<div style="font-size:10px;font-weight:700;color:#666;text-transform:uppercase;margin-bottom:5px">อัพเดทสถานะ:</div>'
         +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:9px">'+statBtns+'</div>'
+        +'<input type="hidden" id="mystat-'+o.id+'-'+ji+'" value="'+(j.status||'progress')+'">'
         +'<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#666;margin-bottom:3px"><span>% ความสำเร็จ</span><span id="mpl-'+o.id+'-'+ji+'" style="color:'+pctColor(j.pct||0)+'">'+( j.pct||0  )+'%</span></div>'
         +'<input type="range" min="0" max="100" step="5" value="'+(j.pct||0)+'" class="pct-sl" style="width:100%" data-oid="'+o.id+'" data-ji="'+ji+'" oninput="myPctInput(this,'+"'"+o.id+"'"+','+ji+')"></div>'
         +'<div class="field"><label>ปัญหา / หมายเหตุ</label><textarea id="myissue-'+o.id+'-'+ji+'" class="fi" style="min-height:44px;font-size:11px">'+(j.issue||"")+'</textarea></div>'
@@ -1018,17 +1024,49 @@ function loadMyWork(){
     return '<div class="my-card"><div style="padding:10px 12px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:11px;font-weight:700;color:var(--o)">📅 '+dStr(o.date)+'</div>'+(o.note?'<div style="font-size:10px;color:#888;margin-top:1px">🚗 '+o.note+'</div>':"")+'</div><span style="font-size:9px;background:#f1f5f9;color:#555;padding:2px 6px;border-radius:7px">'+( o.dept||""  )+'</span></div>'+jobsHtml+'</div>';
   }).join("");
 }
+function myStatClick(btn){
+  var oid=btn.getAttribute("data-oid");
+  var ji=parseInt(btn.getAttribute("data-ji"));
+  var sk=btn.getAttribute("data-sk");
+  mySetStat(oid,ji,sk);
+}
 function mySetStat(oid,ji,status){
   var o=orders.filter(function(x){ return String(x.id)===String(oid); })[0];
   if(!o||!o.jobs[ji]) return;
   o.jobs[ji].status=status;
-  if(status==="done") o.jobs[ji].pct=100;
-  if(status==="waiting") o.jobs[ji].pct=0;
-  loadMyWork();
+  if(status==="done"){
+    o.jobs[ji].pct=100;
+    var pctEl=document.getElementById("mypct-"+oid+"-"+ji);
+    if(pctEl){ pctEl.value=100; myPctInput(pctEl,oid,ji); }
+  }
+  if(status==="waiting"){
+    o.jobs[ji].pct=0;
+    var pctEl2=document.getElementById("mypct-"+oid+"-"+ji);
+    if(pctEl2){ pctEl2.value=0; myPctInput(pctEl2,oid,ji); }
+  }
+  /* Update hidden status field */
+  var statEl=document.getElementById("mystat-"+oid+"-"+ji);
+  if(statEl) statEl.value=status;
+  /* Update button visuals without full reload */
+  var container=btn?btn.parentNode:null;
+  if(container){
+    var allBtns=container.querySelectorAll("[data-sk]");
+    allBtns.forEach(function(b){
+      var bsk=b.getAttribute("data-sk");
+      var s=STAT_LIST.filter(function(x){return x.sk===bsk;})[0];
+      if(!s) return;
+      var active=bsk===status;
+      var si=STAT_LIST.indexOf(s);
+      var span2=si===4?"grid-column:span 2;":"";
+      b.setAttribute("style",span2+(active?"background:"+s.bg+";border:2px solid "+s.bc+";":"background:#fff;border:2px solid #e2e8f0;")+"border-radius:10px;padding:9px 7px;text-align:center;cursor:pointer;");
+      var lbl=b.querySelector("span:last-child");
+      if(lbl) lbl.setAttribute("style",active?"font-size:10px;font-weight:800;color:"+s.tc:"font-size:10px;font-weight:700;color:#888");
+    });
+  }
 }
 function myPctInput(el,oid,ji){
   var val=parseInt(el.value)||0;
-  var lbl=$("mpl-"+oid+"-"+ji);
+  var lbl=document.getElementById("mpl-"+oid+"-"+ji);
   if(lbl){ lbl.textContent=val+"%"; lbl.style.color=pctColor(val); }
   var o=orders.filter(function(x){ return String(x.id)===String(oid); })[0];
   if(o&&o.jobs[ji]) o.jobs[ji].pct=val;
@@ -1036,15 +1074,23 @@ function myPctInput(el,oid,ji){
 function myJobSave(oid,ji){
   var o=orders.filter(function(x){ return String(x.id)===String(oid); })[0];
   if(!o){ toast("ไม่พบข้อมูลใบงาน","err"); return; }
-  var issueEl=$("myissue-"+oid+"-"+ji);
+  /* Get issue text */
+  var issueEl=document.getElementById("myissue-"+oid+"-"+ji);
   if(issueEl) o.jobs[ji].issue=issueEl.value;
-  var pctEl=document.querySelector("[data-oid='"+oid+"'][data-ji='"+ji+"']");
+  /* Get pct from slider using id */
+  var pctEl=document.getElementById("mypct-"+oid+"-"+ji);
   if(pctEl) o.jobs[ji].pct=parseInt(pctEl.value)||0;
+  /* Get status from hidden input */
+  var statEl=document.getElementById("mystat-"+oid+"-"+ji);
+  if(statEl) o.jobs[ji].status=statEl.value;
   o.jobs[ji].updatedAt=nowStr();
   o.updatedAt=nowStr();
   setSyncUI("syn","กำลังบันทึก...");
   saveOrder(o).then(function(){
-    toast("✅ บันทึกแล้ว!");
+    toast("บันทึกแล้ว!");
+    /* Update dashboard if visible */
+    var dashView=$("view-dash");
+    if(dashView&&dashView.classList.contains("active")) renderDash();
     loadMyWork();
   }).catch(function(e){ toast("บันทึกไม่สำเร็จ","err"); });
 }
@@ -1624,6 +1670,7 @@ function startApp(){
     buildFbEmps();
     renderTeamPicker();
     renderList();
+    loadOnline();
     $("loading").style.display="none";
     $("main").style.display="block";
   }).catch(function(){
@@ -1634,9 +1681,9 @@ function startApp(){
 
 /* Auto-refresh every 60s */
 setInterval(function(){ loadOrders().then(function(){ refreshCurrentTab(); }); },60000);
-setInterval(loadOnline,30000);
+setInterval(function(){ updateOnlineCount(); },30000);
 
-/* ---- OT TABS ---- */
+/* ===== OT TABS ===== */
 function swOT(idx){
   var pr=$("ot-panel-req"), pa=$("ot-panel-apv");
   var br=$("ott-req"), ba=$("ott-apv");
@@ -1647,7 +1694,8 @@ function swOT(idx){
   if(idx===0) loadOTList(); else loadOTApprove();
 }
 
-/* ---- OT APPROVE ---- */
+/* ===== OT APPROVE ===== */
+window._otCache={};
 function loadOTApprove(){
   var el=$("ot-apv-list"); if(!el) return;
   var fltDate=$("ot-flt-date")?$("ot-flt-date").value:"";
@@ -1655,6 +1703,8 @@ function loadOTApprove(){
   el.innerHTML="<div style='text-align:center;padding:12px;color:#aaa;font-size:11px'>กำลังโหลด...</div>";
   apiCall("getAll").then(function(d){
     var allOTs=(d.orders||[]).filter(function(o){ return o.__isOT; });
+    window._otCache={};
+    allOTs.forEach(function(o){ window._otCache[String(o.id)]=o; });
     /* date opts */
     var dates=[];
     allOTs.forEach(function(o){ if(o.date&&dates.indexOf(o.date)<0) dates.push(o.date); });
@@ -1670,18 +1720,16 @@ function loadOTApprove(){
       else if(o.status==="rejected") r++;
     });
     var se=$("ot-apv-sum");
-    if(se) se.innerHTML="<div style='background:#fef9c3;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#854d0e'>รอ: "+p+"</div><div style='background:#dcfce7;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#15803d'>อนุมัติ: "+a+"</div><div style='background:#fee2e2;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#b91c1c'>ปฏิเสธ: "+r+"</div><div style='background:#f3e8ff;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#7e22ce'>รวม OT: "+th.toFixed(1)+"h</div>";
-    /* list */
-    var ots=allOTs.filter(function(o){ return !fltDate||o.date===fltDate; }).filter(function(o){ return !fltStat||o.status===fltStat; }).sort(function(a,b){ return String(b.id).localeCompare(String(a.id)); });
+    if(se) se.innerHTML="<div style='background:#fef9c3;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#854d0e'>รอ: "+p+"</div>"+"<div style='background:#dcfce7;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#15803d'>อนุมัติ: "+a+"</div>"+"<div style='background:#fee2e2;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#b91c1c'>ปฏิเสธ: "+r+"</div>"+"<div style='background:#f3e8ff;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#7e22ce'>รวม OT: "+th.toFixed(1)+"h</div>";
+    /* filter */
+    var ots=allOTs.filter(function(o){ return !fltDate||o.date===fltDate; }).filter(function(o){ return !fltStat||o.status===fltStat; }).sort(function(a2,b2){ return String(b2.id).localeCompare(String(a2.id)); });
     if(!ots.length){ el.innerHTML="<div style='text-align:center;padding:12px;color:#aaa;font-size:11px'>ไม่มีรายการ</div>"; return; }
-    /* Store OT data for approval buttons */
-    window._otData={};
-    ots.forEach(function(o){ window._otData[String(o.id)]=o; });
     var rows="";
     ots.forEach(function(o,i){
       var isPending=o.status==="pending";
       var bg=o.status==="approved"?"#f0fdf4":o.status==="rejected"?"#fff5f5":"#fff";
       var bd=o.status==="approved"?"#16a34a":o.status==="rejected"?"#dc2626":"#fde68a";
+      var nid="otn"+i;
       rows+="<div style='background:"+bg+";border:1.5px solid "+bd+";border-radius:12px;padding:12px;margin-bottom:9px'>";
       rows+="<div style='display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:8px'>";
       rows+="<div><div style='font-size:13px;font-weight:700'>"+o.name+"<span class='dept-badge'>"+(o.dept||"")+"</span></div>";
@@ -1691,10 +1739,10 @@ function loadOTApprove(){
       rows+="<div style='background:#f8fafc;border-radius:8px;padding:8px;margin-bottom:7px'><div style='font-size:12px;font-weight:600'>"+o.desc+"</div><div style='font-size:11px;color:#7e22ce;margin-top:2px'>"+o.reason+"</div>"+(o.no?"<div style='font-size:10px;color:#888;margin-top:2px'>"+o.no+(o.cust?" | "+o.cust:"")+"</div>":"")+"</div>";
       if(o.approvedBy) rows+="<div style='font-size:10px;color:#555;padding:5px 8px;background:rgba(0,0,0,.04);border-radius:7px;margin-bottom:7px'>โดย: <b>"+o.approvedBy+"</b>"+(o.approveNote?" - "+o.approveNote:"")+"</div>";
       if(isPending){
-        rows+="<div class='field' style='margin-bottom:7px'><label>หมายเหตุ</label><input id='otn"+i+"' class='fi' placeholder='หมายเหตุ...' style='font-size:12px'></div>";
+        rows+="<div class='field' style='margin-bottom:7px'><label>หมายเหตุ</label><input id='"+nid+"' class='fi' style='font-size:12px'></div>";
         rows+="<div style='display:grid;grid-template-columns:1fr 1fr;gap:7px'>";
-        rows+="<button class='btn btn-g btn-full' data-oid='"+String(o.id)+"' data-dec='approved' data-nid='otn"+i+"' onclick='handleOTBtn(this)'>OK อนุมัติ</button>";
-        rows+="<button class='btn btn-r btn-full' data-oid='"+String(o.id)+"' data-dec='rejected' data-nid='otn"+i+"' onclick='handleOTBtn(this)'>X ไม่อนุมัติ</button>";
+        rows+="<button class='btn btn-g btn-full' data-oid='"+String(o.id)+"' data-dec='approved' data-nid='"+nid+"' onclick='handleOTBtn(this)'>OK อนุมัติ</button>";
+        rows+="<button class='btn btn-r btn-full' data-oid='"+String(o.id)+"' data-dec='rejected' data-nid='"+nid+"' onclick='handleOTBtn(this)'>X ไม่อนุมัติ</button>";
         rows+="</div>";
       }
       rows+="</div>";
@@ -1703,54 +1751,97 @@ function loadOTApprove(){
   }).catch(function(){ el.innerHTML="<div style='text-align:center;padding:12px;color:var(--r);font-size:11px'>โหลดไม่สำเร็จ</div>"; });
 }
 
-/* Use data attributes to avoid quote nesting */
 function handleOTBtn(btn){
   var oid=btn.getAttribute("data-oid");
   var dec=btn.getAttribute("data-dec");
   var nid=btn.getAttribute("data-nid");
-  doOTDecision(oid, dec, nid);
-}
-
-function doOTDecision(otId, decision, nid){
   var approver=$("approver-name")?$("approver-name").value:"";
   if(!approver){ toast("กรุณาเลือกชื่อผู้อนุมัติก่อน","err"); return; }
   var noteEl=$(nid);
   var note=noteEl?noteEl.value.trim():"";
-  var label=decision==="approved"?"อนุมัติ":"ไม่อนุมัติ";
+  var label=dec==="approved"?"อนุมัติ":"ไม่อนุมัติ";
   if(!confirm("ยืนยัน "+label+"?")) return;
-  var ex=window._otData?window._otData[String(otId)]:null;
+  var ex=window._otCache[String(oid)];
   if(!ex){ toast("ไม่พบรายการ","err"); return; }
-  var updated=Object.assign({},ex,{status:decision,approvedBy:approver,approveNote:note,approvedAt:nowStr()});
-  apiCall("save",{order:updated}).then(function(){
+  apiCall("save",{order:Object.assign({},ex,{status:dec,approvedBy:approver,approveNote:note,approvedAt:nowStr()})}).then(function(){
     toast("บันทึก"+label+"แล้ว!");
     loadOTApprove();
     loadOTList();
   }).catch(function(){ toast("บันทึกไม่สำเร็จ","err"); });
 }
 
-/* ---- ONLINE PRESENCE ---- */
+/* ===== ONLINE PRESENCE ===== */
+var _presId="u"+Date.now()+"_"+Math.random().toString(36).substr(2,4);
+var _presName="";
+var _presBC=null;
+var _presOthers={};
+
 function startPresence(name){
   if(!name) return;
-  window._myUname=name;
-  sendPresence();
-  if(!window._presTimer) window._presTimer=setInterval(sendPresence,55000);
+  _presName=name;
+  try{ localStorage.setItem("marc_p_"+_presId, JSON.stringify({n:name,t:Date.now()})); cleanPres(); }catch(e){}
+  try{
+    if(typeof BroadcastChannel!=="undefined"){
+      if(!_presBC){
+        _presBC=new BroadcastChannel("marc_pres");
+        _presBC.onmessage=function(ev){
+          var d=ev.data||{};
+          if(d.type==="hi"||d.type==="pong"){ _presOthers[d.id]=d.n; updateOnlineCount(); if(d.type==="hi"&&_presName) _presBC.postMessage({type:"pong",n:_presName,id:_presId}); }
+          else if(d.type==="bye"){ delete _presOthers[d.id]; updateOnlineCount(); }
+        };
+      }
+      _presBC.postMessage({type:"hi",n:name,id:_presId});
+    }
+  }catch(e){}
+  updateOnlineCount();
+  apiCall("save",{order:{id:"PRES_"+_presId,__isPresence:true,name:name,ts:Date.now()}}).catch(function(){});
+  if(!window._presTimer) window._presTimer=setInterval(function(){
+    try{ localStorage.setItem("marc_p_"+_presId, JSON.stringify({n:_presName,t:Date.now()})); cleanPres(); }catch(e){}
+    updateOnlineCount();
+    if(_presBC&&_presName) _presBC.postMessage({type:"hi",n:_presName,id:_presId});
+    apiCall("save",{order:{id:"PRES_"+_presId,__isPresence:true,name:_presName,ts:Date.now()}}).catch(function(){});
+  },30000);
 }
-function sendPresence(){
-  if(!window._myUname) return;
-  if(!window._mySess) window._mySess="s"+Date.now();
-  apiCall("save",{order:{id:"PRES_"+window._mySess,__isPresence:true,name:window._myUname,ts:Date.now()}}).catch(function(){});
+
+function cleanPres(){
+  try{
+    var now=Date.now(), exp=3*60*1000;
+    Object.keys(localStorage).filter(function(k){ return k.startsWith("marc_p_"); }).forEach(function(k){
+      try{ var d=JSON.parse(localStorage.getItem(k)); if(now-parseInt(d.t||0)>exp) localStorage.removeItem(k); }catch(e){ localStorage.removeItem(k); }
+    });
+  }catch(e){}
 }
+
+function updateOnlineCount(){
+  var names={};
+  if(_presName) names[_presName]=1;
+  Object.values(_presOthers).forEach(function(n){ if(n) names[n]=1; });
+  try{
+    var now=Date.now(), exp=3*60*1000;
+    Object.keys(localStorage).filter(function(k){ return k.startsWith("marc_p_"); }).forEach(function(k){
+      try{ var d=JSON.parse(localStorage.getItem(k)); if(d&&d.n&&(now-parseInt(d.t||0))<exp) names[d.n]=1; }catch(e){} });
+  }catch(e){}
+  var cnt=Math.max(1,Object.keys(names).length);
+  var el=$("online-count"); if(el) el.textContent=cnt;
+  var badge=$("online-badge"); if(badge) badge.title="Online: "+Object.keys(names).join(", ");
+}
+
 function loadOnline(){
   apiCall("getAll").then(function(d){
-    var now=Date.now(),exp=5*60*1000;
+    var now=Date.now(), exp=5*60*1000;
     var names={};
+    if(_presName) names[_presName]=1;
     (d.orders||[]).filter(function(o){ return o.__isPresence&&(now-parseInt(o.ts||0))<exp; }).forEach(function(p){ if(p.name) names[p.name]=1; });
+    Object.values(_presOthers).forEach(function(n){ if(n) names[n]=1; });
     var cnt=Math.max(1,Object.keys(names).length);
     var el=$("online-count"); if(el) el.textContent=cnt;
-    var badge=$("online-badge");
-    if(badge) badge.title="Online: "+Object.keys(names).join(", ");
+    var badge=$("online-badge"); if(badge) badge.title="Online: "+Object.keys(names).join(", ");
   }).catch(function(){});
 }
+
+window.addEventListener("beforeunload",function(){
+  try{ localStorage.removeItem("marc_p_"+_presId); if(_presBC) _presBC.postMessage({type:"bye",id:_presId}); }catch(e){}
+});
 
 </script>
 </body>
