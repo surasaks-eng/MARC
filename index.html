@@ -247,12 +247,9 @@ textarea.fi{resize:vertical;min-height:50px}
 </div>
 
 <div class="sync-bar no-print">
-  <div style="display:flex;align-items:center;gap:8px">
-    <div><span class="dot" id="sdot"></span><span class="stxt" id="stxt">เชื่อมต่อ Google Sheets</span></div>
-    <div id="online-badge" style="display:flex;align-items:center;gap:4px;background:#dcfce7;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;color:#15803d">
-      <span style="width:6px;height:6px;background:#16a34a;border-radius:50%;display:inline-block;animation:blink .7s infinite"></span>
-      <span id="online-count">1</span> online
-    </div>
+  <div style="display:flex;align-items:center;gap:7px">
+    <div><span class="dot" id="sdot"></span><span class="stxt" id="stxt">เชื่อมต่อ</span></div>
+    <div id="online-badge" style="background:#dcfce7;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;color:#15803d"><span id="online-count">1</span> online</div>
   </div>
   <button onclick="doRefresh()" style="background:none;border:none;cursor:pointer;font-size:10px;color:var(--b);font-family:'Sarabun',sans-serif">🔄 รีเฟรช</button>
 </div>
@@ -441,51 +438,35 @@ textarea.fi{resize:vertical;min-height:50px}
     </div>
     <button class="btn btn-o btn-full" style="background:var(--p)" onclick="saveOT()">📤 ส่งขออนุมัติ OT</button>
   </div>
-  <!-- OT sub-tabs -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 5px rgba(0,0,0,.08);margin-bottom:10px">
-    <button id="ott-req" onclick="swOTTab('req')" style="padding:10px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:'Sarabun',sans-serif;background:var(--o);color:#fff">📋 ขอ OT</button>
-    <button id="ott-apv" onclick="swOTTab('apv')" style="padding:10px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:'Sarabun',sans-serif;background:#f1f5f9;color:#555">✅ อนุมัติ OT</button>
+  <div style="display:grid;grid-template-columns:1fr 1fr;border-radius:10px;overflow:hidden;box-shadow:0 1px 5px rgba(0,0,0,.08);margin-bottom:10px">
+    <button id="ott-req" onclick="swOT(0)" style="padding:10px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:Sarabun,sans-serif;background:var(--o);color:#fff">รายการขอ OT</button>
+    <button id="ott-apv" onclick="swOT(1)" style="padding:10px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:Sarabun,sans-serif;background:#f1f5f9;color:#555">อนุมัติ OT</button>
   </div>
-
-  <!-- REQUEST LIST -->
   <div id="ot-panel-req">
     <div class="card">
-      <div class="ct">📋 รายการขอ OT <button onclick="loadOTList()" style="background:none;border:none;cursor:pointer;font-size:10px;color:var(--b);font-family:'Sarabun',sans-serif">🔄</button></div>
+      <div class="ct">รายการขอ OT</div>
       <div id="ot-list"><div style="text-align:center;padding:14px;color:#aaa;font-size:11px">กำลังโหลด...</div></div>
     </div>
   </div>
-
-  <!-- APPROVE PANEL (Manager) -->
   <div id="ot-panel-apv" style="display:none">
     <div class="card" style="background:#f0fdf4;border:1.5px solid #bbf7d0">
-      <div class="ct" style="border-color:#16a34a">🔑 โหมดหัวหน้างาน — อนุมัติ OT</div>
-      <!-- Approver identity -->
-      <div class="field" style="margin-bottom:12px">
-        <label>ผู้อนุมัติ (เลือกชื่อของคุณ)</label>
+      <div class="ct" style="border-color:#16a34a">อนุมัติ OT (หัวหน้างาน)</div>
+      <div class="field" style="margin-bottom:10px">
+        <label>ผู้อนุมัติ</label>
         <select id="approver-name" class="fi">
-          <option value="">— เลือกชื่อผู้อนุมัติ —</option>
+          <option value="">เลือกชื่อผู้อนุมัติ</option>
           <option value="จักรินทร์ ช่วยอินทร์">จักรินทร์ ช่วยอินทร์</option>
           <option value="ประพงษ์ โยสิทธิ์">ประพงษ์ โยสิทธิ์</option>
           <option value="สุรศักดิ์ สินเสาดุม">สุรศักดิ์ สินเสาดุม</option>
         </select>
       </div>
-      <!-- Filter -->
-      <div style="display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap">
-        <select id="ot-flt-date" class="fi" style="flex:1;font-size:12px" onchange="loadOTApprove()">
-          <option value="">— ทุกวัน —</option>
-        </select>
-        <select id="ot-flt-stat" class="fi" style="flex:1;font-size:12px" onchange="loadOTApprove()">
-          <option value="">— ทุกสถานะ —</option>
-          <option value="pending">⏳ รอพิจารณา</option>
-          <option value="approved">✅ อนุมัติแล้ว</option>
-          <option value="rejected">❌ ไม่อนุมัติ</option>
-        </select>
-        <button onclick="loadOTApprove()" class="btn btn-g" style="padding:7px 10px;font-size:11px">🔄</button>
+      <div style="display:flex;gap:6px;margin-bottom:9px">
+        <select id="ot-flt-date" class="fi" style="flex:1;font-size:11px" onchange="loadOTApprove()"><option value="">ทุกวัน</option></select>
+        <select id="ot-flt-stat" class="fi" style="flex:1;font-size:11px" onchange="loadOTApprove()"><option value="">ทุกสถานะ</option><option value="pending">รอพิจารณา</option><option value="approved">อนุมัติแล้ว</option><option value="rejected">ไม่อนุมัติ</option></select>
+        <button onclick="loadOTApprove()" class="btn btn-g" style="padding:6px 9px;font-size:11px">รีเฟรช</button>
       </div>
-      <!-- Summary -->
-      <div id="ot-apv-summary" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"></div>
-      <!-- List -->
-      <div id="ot-apv-list"><div style="text-align:center;padding:14px;color:#aaa;font-size:11px">กำลังโหลด...</div></div>
+      <div id="ot-apv-sum" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px"></div>
+      <div id="ot-apv-list"></div>
     </div>
   </div>
 </div>
@@ -913,7 +894,7 @@ function sw(t){
   else if(t==="my") loadMyWork();
   else if(t==="ws"){ $("ws-date").value=todayStr(); renderWS(); }
   else if(t==="fb"){ buildFbEmps(); loadFb(); }
-  else if(t==="ot"){ loadOTEmps(); swOTTab("req"); refreshJobSelects(); }
+  else if(t==="ot"){ loadOTEmps(); swOT(0); refreshJobSelects(); }
   else if(t==="jobs") renderJobDBList();
   else if(t==="team"||t==="one") refreshJobSelects();
 }
@@ -990,7 +971,6 @@ function buildMyEmpSel(){
 function onMyNameChange(){
   var name=$("my-name").value;
   if(!name){ $("my-list").innerHTML='<div style="text-align:center;padding:30px;color:#aaa;font-size:13px">👆 เลือกชื่อของคุณด้านบน</div>'; return; }
-  startPresence(name);
   $("my-date").value=todayStr();
   loadMyWork();
 }
@@ -1259,26 +1239,6 @@ function saveOT(){
     loadOTList();
   }).catch(function(){ toast("บันทึกไม่สำเร็จ","err"); });
 }
-/* ---- OT SUB-TABS ---- */
-function swOTTab(tab){
-  var reqBtn=$("ott-req"), apvBtn=$("ott-apv");
-  var reqPanel=$("ot-panel-req"), apvPanel=$("ot-panel-apv");
-  if(tab==="req"){
-    if(reqBtn){reqBtn.style.background="var(--o)";reqBtn.style.color="#fff";}
-    if(apvBtn){apvBtn.style.background="#f1f5f9";apvBtn.style.color="#555";}
-    if(reqPanel)reqPanel.style.display="block";
-    if(apvPanel)apvPanel.style.display="none";
-    loadOTList();
-  } else {
-    if(reqBtn){reqBtn.style.background="#f1f5f9";reqBtn.style.color="#555";}
-    if(apvBtn){apvBtn.style.background="#16a34a";apvBtn.style.color="#fff";}
-    if(reqPanel)reqPanel.style.display="none";
-    if(apvPanel)apvPanel.style.display="block";
-    loadOTApprove();
-  }
-}
-
-/* ---- OT REQUEST LIST (employee) ---- */
 function loadOTList(){
   var el=$("ot-list"); if(!el) return;
   el.innerHTML='<div style="text-align:center;padding:12px;color:#aaa;font-size:11px">กำลังโหลด...</div>';
@@ -1286,105 +1246,16 @@ function loadOTList(){
     var ots=(d.orders||[]).filter(function(o){ return o.__isOT; }).sort(function(a,b){ return String(b.id).localeCompare(String(a.id)); });
     if(!ots.length){ el.innerHTML='<div style="text-align:center;padding:12px;color:#aaa;font-size:11px">ยังไม่มีการขอ OT</div>'; return; }
     el.innerHTML=ots.map(function(o){
-      var bg=o.status==="approved"?"#f0fdf4":o.status==="rejected"?"#fff5f5":"#f9f0ff";
-      var bd=o.status==="approved"?"#16a34a":o.status==="rejected"?"#dc2626":"#d8b4fe";
-      var badge=o.status==="approved"?'<span style="background:#dcfce7;color:#15803d;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700">✅ อนุมัติแล้ว</span>':o.status==="rejected"?'<span style="background:#fee2e2;color:#b91c1c;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700">❌ ไม่อนุมัติ</span>':'<span style="background:#f3e8ff;color:#7e22ce;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700">⏳ รอพิจารณา</span>';
-      return '<div style="background:'+bg+';border:1.5px solid '+bd+';border-radius:11px;padding:11px 13px;margin-bottom:8px">'
-        +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:6px">'
-        +'<div><div style="font-size:12px;font-weight:700">'+o.name+'<span class="dept-badge">'+(o.dept||"")+'</span></div>'
-        +'<div style="font-size:10px;color:#555;margin-top:2px">📅 '+dStr(o.date)+' | ⏰ '+(o.start||"-")+' – '+(o.end||"-")+'</div>'
-        +'<div style="font-size:11px;font-weight:700;color:var(--p);margin-top:1px">⏰ '+(o.otHours||"0")+' ชม. OT</div></div>'
-        +badge+'</div>'
-        +'<div style="font-size:11px;color:#374151">📌 '+o.desc+'</div>'
-        +'<div style="font-size:10px;color:#7e22ce;margin-top:2px">💬 '+o.reason+'</div>'
-        +(o.approvedBy?'<div style="font-size:10px;color:#555;margin-top:5px;padding-top:5px;border-top:1px solid rgba(0,0,0,.07)">👤 '+(o.status==="approved"?"อนุมัติโดย: ":"ปฏิเสธโดย: ")+o.approvedBy+(o.approveNote?" — "+o.approveNote:"")+'</div>':"")
+      return '<div style="background:#f9f0ff;border:1px solid #d8b4fe;border-radius:10px;padding:10px 12px;margin-bottom:7px">'
+        +'<div style="display:flex;justify-content:space-between;align-items:flex-start"><div>'
+        +'<div style="font-size:12px;font-weight:700">'+o.name+'<span class="dept-badge">'+( o.dept||"" )+'</span></div>'
+        +'<div style="font-size:10px;color:#888;margin-top:1px">📅 '+dStr(o.date)+' | ⏰ '+(o.start||"-")+' – '+(o.end||"-")+'  <b style="color:var(--p)">'+(o.otHours||"0")+'h OT</b></div></div>'
+        +'<span class="ot-badge">'+(o.status==="approved"?"✅ อนุมัติ":o.status==="rejected"?"❌ ไม่อนุมัติ":"⏳ รอ")+'</span></div>'
+        +'<div style="font-size:11px;color:#374151;margin-top:5px">📌 '+o.desc+'</div>'
+        +'<div style="font-size:10px;color:#7e22ce;margin-top:3px">เหตุผล: '+o.reason+'</div>'
         +'</div>';
     }).join("");
   }).catch(function(){ el.innerHTML='<div style="text-align:center;padding:12px;color:var(--r);font-size:11px">โหลดไม่สำเร็จ</div>'; });
-}
-
-/* ---- OT APPROVE LIST (manager) ---- */
-function loadOTApprove(){
-  var el=$("ot-apv-list"); if(!el) return;
-  var fltDate=$("ot-flt-date")?$("ot-flt-date").value:"";
-  var fltStat=$("ot-flt-stat")?$("ot-flt-stat").value:"";
-  el.innerHTML='<div style="text-align:center;padding:12px;color:#aaa;font-size:11px">กำลังโหลด...</div>';
-  apiCall("getAll").then(function(d){
-    var allOTs=(d.orders||[]).filter(function(o){ return o.__isOT; });
-    /* Populate date filter */
-    var dates=[]; allOTs.forEach(function(o){ if(o.date&&dates.indexOf(o.date)<0) dates.push(o.date); });
-    dates.sort().reverse();
-    var dOpts='<option value="">— ทุกวัน —</option>';
-    dates.forEach(function(dt){ dOpts+='<option value="'+dt+'"'+(fltDate===dt?' selected':'')+'>'+dStr(dt)+'</option>'; });
-    var dsel=$("ot-flt-date"); if(dsel) dsel.innerHTML=dOpts;
-    /* Summary */
-    var pending=allOTs.filter(function(o){ return o.status==="pending"; }).length;
-    var approved=allOTs.filter(function(o){ return o.status==="approved"; }).length;
-    var rejected=allOTs.filter(function(o){ return o.status==="rejected"; }).length;
-    var totalOTH=allOTs.filter(function(o){ return o.status==="approved"; }).reduce(function(s,o){ return s+parseFloat(o.otHours||0); },0);
-    var sumEl=$("ot-apv-summary"); if(sumEl){
-      sumEl.innerHTML='<div style="background:#fef9c3;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#854d0e">⏳ รอ: '+pending+'</div>'
-        +'<div style="background:#dcfce7;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#15803d">✅ อนุมัติ: '+approved+'</div>'
-        +'<div style="background:#fee2e2;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#b91c1c">❌ ไม่อนุมัติ: '+rejected+'</div>'
-        +'<div style="background:#f3e8ff;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#7e22ce">⏰ OT: '+totalOTH.toFixed(1)+'h</div>';
-    }
-    /* Filter */
-    var ots=allOTs.filter(function(o){ return !fltDate||o.date===fltDate; }).filter(function(o){ return !fltStat||o.status===fltStat; }).sort(function(a,b){ return String(b.id).localeCompare(String(a.id)); });
-    if(!ots.length){ el.innerHTML='<div style="text-align:center;padding:14px;color:#aaa;font-size:11px">ไม่มีรายการ</div>'; return; }
-    el.innerHTML=ots.map(function(o){
-      var isPending=o.status==="pending";
-      var bg=o.status==="approved"?"#f0fdf4":o.status==="rejected"?"#fff5f5":"#fff";
-      var bd=o.status==="approved"?"#16a34a":o.status==="rejected"?"#dc2626":"#fde68a";
-      var badge=isPending?'<span style="background:#fef9c3;color:#854d0e;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700">⏳ รอพิจารณา</span>':o.status==="approved"?'<span style="background:#dcfce7;color:#15803d;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700">✅ อนุมัติแล้ว</span>':'<span style="background:#fee2e2;color:#b91c1c;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700">❌ ไม่อนุมัติ</span>';
-      var noteId="otn-"+String(o.id).replace(/[^a-zA-Z0-9]/g,"_");
-      return '<div style="background:'+bg+';border:1.5px solid '+bd+';border-radius:12px;padding:12px;margin-bottom:9px;box-shadow:0 1px 5px rgba(0,0,0,.06)">'
-        +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:8px">'
-        +'<div><div style="font-size:13px;font-weight:700">'+o.name+'<span class="dept-badge">'+(o.dept||"")+'</span></div>'
-        +'<div style="font-size:10px;color:#555;margin-top:2px">📅 '+dStr(o.date)+'</div>'
-        +'<div style="font-size:11px;font-weight:700;color:var(--p);margin-top:1px">⏰ '+(o.start||"-")+' – '+(o.end||"-")+' = <b>'+(o.otHours||"0")+' ชม. OT</b></div></div>'
-        +badge+'</div>'
-        +'<div style="background:#f8fafc;border-radius:8px;padding:8px 10px;margin-bottom:8px">'
-        +'<div style="font-size:12px;font-weight:600">📌 '+o.desc+'</div>'
-        +'<div style="font-size:11px;color:#7e22ce;margin-top:2px">💬 เหตุผล: '+o.reason+'</div>'
-        +(o.no?'<div style="font-size:10px;color:#888;margin-top:2px">เลขงาน: '+o.no+(o.cust?" | "+o.cust:"")+'</div>':"")
-        +'</div>'
-        +(o.approvedBy?'<div style="font-size:10px;color:#555;padding:6px 8px;background:rgba(0,0,0,.04);border-radius:7px;margin-bottom:8px">👤 '+(o.status==="approved"?"อนุมัติ":"ปฏิเสธ")+'โดย: <b>'+o.approvedBy+'</b>'+(o.approveNote?" — "+o.approveNote:"")+'</div>':"")
-        +(isPending
-          ?'<div class="field" style="margin-bottom:7px"><label>หมายเหตุ (ไม่บังคับ)</label><input id="'+noteId+'" class="fi" placeholder="เช่น อนุมัติ 2 ชม. หรือ ยังไม่ครบเงื่อนไข" style="font-size:12px"></div>'
-            +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">'
-            +'<button onclick="doApproveOT(''+o.id+'','approved',''+noteId+'')" style="padding:11px;font-size:12px;font-weight:700;background:#16a34a;color:#fff;border:none;border-radius:9px;cursor:pointer;font-family:'Sarabun',sans-serif">✅ อนุมัติ OT</button>'
-            +'<button onclick="doApproveOT(''+o.id+'','rejected',''+noteId+'')" style="padding:11px;font-size:12px;font-weight:700;background:#dc2626;color:#fff;border:none;border-radius:9px;cursor:pointer;font-family:'Sarabun',sans-serif">❌ ไม่อนุมัติ</button>'
-            +'</div>'
-          :"")
-        +'</div>';
-    }).join("");
-  }).catch(function(){ el.innerHTML='<div style="text-align:center;padding:12px;color:var(--r);font-size:11px">โหลดไม่สำเร็จ</div>'; });
-}
-
-/* ---- DO APPROVE / REJECT ---- */
-function doApproveOT(otId, decision, noteId){
-  var approver=$("approver-name")?$("approver-name").value:"";
-  if(!approver){ toast("กรุณาเลือกชื่อผู้อนุมัติก่อน","err"); return; }
-  var noteEl=$(noteId);
-  var note=noteEl?noteEl.value.trim():"";
-  var label=decision==="approved"?"อนุมัติ":"ไม่อนุมัติ";
-  if(!confirm("ยืนยัน"+label+" OT นี้?")) return;
-  /* Find existing OT record */
-  apiCall("getAll").then(function(d){
-    var existing=(d.orders||[]).filter(function(o){ return String(o.id)===String(otId); })[0];
-    if(!existing){ toast("ไม่พบรายการ","err"); return; }
-    var updated=Object.assign({},existing,{
-      status:decision,
-      approvedBy:approver,
-      approveNote:note,
-      approvedAt:nowStr()
-    });
-    return apiCall("save",{order:updated});
-  }).then(function(){
-    toast("✅ "+label+"แล้ว!");
-    loadOTApprove();
-    loadOTList();
-  }).catch(function(){ toast("บันทึกไม่สำเร็จ","err"); });
 }
 
 /* ---------- AI IMPORT ---------- */
@@ -1753,7 +1624,6 @@ function startApp(){
     buildFbEmps();
     renderTeamPicker();
     renderList();
-    loadOnlineUsers();
     $("loading").style.display="none";
     $("main").style.display="block";
   }).catch(function(){
@@ -1764,8 +1634,124 @@ function startApp(){
 
 /* Auto-refresh every 60s */
 setInterval(function(){ loadOrders().then(function(){ refreshCurrentTab(); }); },60000);
-/* Refresh online count every 30s */
-setInterval(function(){ loadOnlineUsers(); },30000);
+setInterval(loadOnline,30000);
+
+/* ---- OT TABS ---- */
+function swOT(idx){
+  var pr=$("ot-panel-req"), pa=$("ot-panel-apv");
+  var br=$("ott-req"), ba=$("ott-apv");
+  if(pr) pr.style.display=idx===0?"block":"none";
+  if(pa) pa.style.display=idx===1?"block":"none";
+  if(br){ br.style.background=idx===0?"var(--o)":"#f1f5f9"; br.style.color=idx===0?"#fff":"#555"; }
+  if(ba){ ba.style.background=idx===1?"var(--o)":"#f1f5f9"; ba.style.color=idx===1?"#fff":"#555"; }
+  if(idx===0) loadOTList(); else loadOTApprove();
+}
+
+/* ---- OT APPROVE ---- */
+function loadOTApprove(){
+  var el=$("ot-apv-list"); if(!el) return;
+  var fltDate=$("ot-flt-date")?$("ot-flt-date").value:"";
+  var fltStat=$("ot-flt-stat")?$("ot-flt-stat").value:"";
+  el.innerHTML="<div style='text-align:center;padding:12px;color:#aaa;font-size:11px'>กำลังโหลด...</div>";
+  apiCall("getAll").then(function(d){
+    var allOTs=(d.orders||[]).filter(function(o){ return o.__isOT; });
+    /* date opts */
+    var dates=[];
+    allOTs.forEach(function(o){ if(o.date&&dates.indexOf(o.date)<0) dates.push(o.date); });
+    dates.sort().reverse();
+    var dOpts="<option value=''>ทุกวัน</option>";
+    dates.forEach(function(dt){ dOpts+="<option value='"+dt+"'"+(fltDate===dt?" selected":"")+">"+dStr(dt)+"</option>"; });
+    var dsel=$("ot-flt-date"); if(dsel) dsel.innerHTML=dOpts;
+    /* summary */
+    var p=0,a=0,r=0,th=0;
+    allOTs.forEach(function(o){
+      if(o.status==="pending") p++;
+      else if(o.status==="approved"){ a++; th+=parseFloat(o.otHours||0); }
+      else if(o.status==="rejected") r++;
+    });
+    var se=$("ot-apv-sum");
+    if(se) se.innerHTML="<div style='background:#fef9c3;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#854d0e'>รอ: "+p+"</div><div style='background:#dcfce7;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#15803d'>อนุมัติ: "+a+"</div><div style='background:#fee2e2;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#b91c1c'>ปฏิเสธ: "+r+"</div><div style='background:#f3e8ff;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#7e22ce'>รวม OT: "+th.toFixed(1)+"h</div>";
+    /* list */
+    var ots=allOTs.filter(function(o){ return !fltDate||o.date===fltDate; }).filter(function(o){ return !fltStat||o.status===fltStat; }).sort(function(a,b){ return String(b.id).localeCompare(String(a.id)); });
+    if(!ots.length){ el.innerHTML="<div style='text-align:center;padding:12px;color:#aaa;font-size:11px'>ไม่มีรายการ</div>"; return; }
+    /* Store OT data for approval buttons */
+    window._otData={};
+    ots.forEach(function(o){ window._otData[String(o.id)]=o; });
+    var rows="";
+    ots.forEach(function(o,i){
+      var isPending=o.status==="pending";
+      var bg=o.status==="approved"?"#f0fdf4":o.status==="rejected"?"#fff5f5":"#fff";
+      var bd=o.status==="approved"?"#16a34a":o.status==="rejected"?"#dc2626":"#fde68a";
+      rows+="<div style='background:"+bg+";border:1.5px solid "+bd+";border-radius:12px;padding:12px;margin-bottom:9px'>";
+      rows+="<div style='display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:8px'>";
+      rows+="<div><div style='font-size:13px;font-weight:700'>"+o.name+"<span class='dept-badge'>"+(o.dept||"")+"</span></div>";
+      rows+="<div style='font-size:10px;color:#555;margin-top:2px'>"+dStr(o.date)+"</div>";
+      rows+="<div style='font-size:11px;font-weight:700;color:#9333ea;margin-top:1px'>"+(o.start||"-")+" - "+(o.end||"-")+" = "+(o.otHours||"0")+" ชม.</div></div>";
+      rows+=(isPending?"<span style='background:#fef9c3;color:#854d0e;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700'>รอพิจารณา</span>":o.status==="approved"?"<span style='background:#dcfce7;color:#15803d;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700'>อนุมัติแล้ว</span>":"<span style='background:#fee2e2;color:#b91c1c;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700'>ไม่อนุมัติ</span>")+"</div>";
+      rows+="<div style='background:#f8fafc;border-radius:8px;padding:8px;margin-bottom:7px'><div style='font-size:12px;font-weight:600'>"+o.desc+"</div><div style='font-size:11px;color:#7e22ce;margin-top:2px'>"+o.reason+"</div>"+(o.no?"<div style='font-size:10px;color:#888;margin-top:2px'>"+o.no+(o.cust?" | "+o.cust:"")+"</div>":"")+"</div>";
+      if(o.approvedBy) rows+="<div style='font-size:10px;color:#555;padding:5px 8px;background:rgba(0,0,0,.04);border-radius:7px;margin-bottom:7px'>โดย: <b>"+o.approvedBy+"</b>"+(o.approveNote?" - "+o.approveNote:"")+"</div>";
+      if(isPending){
+        rows+="<div class='field' style='margin-bottom:7px'><label>หมายเหตุ</label><input id='otn"+i+"' class='fi' placeholder='หมายเหตุ...' style='font-size:12px'></div>";
+        rows+="<div style='display:grid;grid-template-columns:1fr 1fr;gap:7px'>";
+        rows+="<button class='btn btn-g btn-full' data-oid='"+String(o.id)+"' data-dec='approved' data-nid='otn"+i+"' onclick='handleOTBtn(this)'>OK อนุมัติ</button>";
+        rows+="<button class='btn btn-r btn-full' data-oid='"+String(o.id)+"' data-dec='rejected' data-nid='otn"+i+"' onclick='handleOTBtn(this)'>X ไม่อนุมัติ</button>";
+        rows+="</div>";
+      }
+      rows+="</div>";
+    });
+    el.innerHTML=rows;
+  }).catch(function(){ el.innerHTML="<div style='text-align:center;padding:12px;color:var(--r);font-size:11px'>โหลดไม่สำเร็จ</div>"; });
+}
+
+/* Use data attributes to avoid quote nesting */
+function handleOTBtn(btn){
+  var oid=btn.getAttribute("data-oid");
+  var dec=btn.getAttribute("data-dec");
+  var nid=btn.getAttribute("data-nid");
+  doOTDecision(oid, dec, nid);
+}
+
+function doOTDecision(otId, decision, nid){
+  var approver=$("approver-name")?$("approver-name").value:"";
+  if(!approver){ toast("กรุณาเลือกชื่อผู้อนุมัติก่อน","err"); return; }
+  var noteEl=$(nid);
+  var note=noteEl?noteEl.value.trim():"";
+  var label=decision==="approved"?"อนุมัติ":"ไม่อนุมัติ";
+  if(!confirm("ยืนยัน "+label+"?")) return;
+  var ex=window._otData?window._otData[String(otId)]:null;
+  if(!ex){ toast("ไม่พบรายการ","err"); return; }
+  var updated=Object.assign({},ex,{status:decision,approvedBy:approver,approveNote:note,approvedAt:nowStr()});
+  apiCall("save",{order:updated}).then(function(){
+    toast("บันทึก"+label+"แล้ว!");
+    loadOTApprove();
+    loadOTList();
+  }).catch(function(){ toast("บันทึกไม่สำเร็จ","err"); });
+}
+
+/* ---- ONLINE PRESENCE ---- */
+function startPresence(name){
+  if(!name) return;
+  window._myUname=name;
+  sendPresence();
+  if(!window._presTimer) window._presTimer=setInterval(sendPresence,55000);
+}
+function sendPresence(){
+  if(!window._myUname) return;
+  if(!window._mySess) window._mySess="s"+Date.now();
+  apiCall("save",{order:{id:"PRES_"+window._mySess,__isPresence:true,name:window._myUname,ts:Date.now()}}).catch(function(){});
+}
+function loadOnline(){
+  apiCall("getAll").then(function(d){
+    var now=Date.now(),exp=5*60*1000;
+    var names={};
+    (d.orders||[]).filter(function(o){ return o.__isPresence&&(now-parseInt(o.ts||0))<exp; }).forEach(function(p){ if(p.name) names[p.name]=1; });
+    var cnt=Math.max(1,Object.keys(names).length);
+    var el=$("online-count"); if(el) el.textContent=cnt;
+    var badge=$("online-badge");
+    if(badge) badge.title="Online: "+Object.keys(names).join(", ");
+  }).catch(function(){});
+}
+
 </script>
 </body>
 </html>
