@@ -249,7 +249,7 @@ textarea.fi{resize:vertical;min-height:50px}
 <div class="sync-bar no-print">
   <div style="display:flex;align-items:center;gap:7px">
     <div><span class="dot" id="sdot"></span><span class="stxt" id="stxt">เชื่อมต่อ</span></div>
-    <div id="online-badge" style="background:#dcfce7;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;color:#15803d"><span id="online-count">1</span> online</div>
+    <div id="online-badge" style="background:#dcfce7;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;color:#15803d" title="ผู้ใช้งานออนไลน์"><span id="online-count">1</span> online</div>
   </div>
   <button onclick="doRefresh()" style="background:none;border:none;cursor:pointer;font-size:10px;color:var(--b);font-family:'Sarabun',sans-serif">🔄 รีเฟรช</button>
 </div>
@@ -798,7 +798,8 @@ function toast(msg, type){
   el.textContent=msg;
   el.className="notif"+(type==="err"?" err":"")+" show";
   clearTimeout(window._toastTimer);
-  window._toastTimer=setTimeout(function(){ el.classList.remove("show"); },2500);
+  var dur=type==="err"?3000:1500;
+  window._toastTimer=setTimeout(function(){ el.classList.remove("show"); },dur);
 }
 
 /* ---------- LOCK SCREEN ---------- */
@@ -871,7 +872,7 @@ function refreshCurrentTab(){
   else if(t==="my"){ var ne=$("my-name"); if(ne) ne.value=""; var le=$("my-list"); if(le) le.innerHTML='<div style="text-align:center;padding:30px;color:#aaa;font-size:13px">&#x1F446; เลือกชื่อของคุณด้านบน</div>'; }
   else if(t==="ws") renderWS();
   else if(t==="print") renderPrintSelect();
-  else if(t==="ot"){ loadOTEmps(); swOT(0); refreshJobSelects(); }
+  else if(t==="ot") loadOTList();
 }
 
 /* ---------- DATE LIMITS ---------- */
@@ -976,7 +977,6 @@ function buildMyEmpSel(){
 function onMyNameChange(){
   var name=$("my-name").value;
   if(!name){ $("my-list").innerHTML='<div style="text-align:center;padding:30px;color:#aaa;font-size:13px">👆 เลือกชื่อของคุณด้านบน</div>'; return; }
-  startPresence(name);
   $("my-date").value=todayStr();
   loadMyWork();
 }
@@ -984,115 +984,196 @@ function loadMyWork(){
   var name=$("my-name")?$("my-name").value:"";
   var date=$("my-date")?$("my-date").value:"";
   var el=$("my-list"); if(!el) return;
-  if(!name){ el.innerHTML='<div style="text-align:center;padding:30px;color:#aaa;font-size:13px">👆 เลือกชื่อของคุณด้านบน</div>'; return; }
+  if(!name){
+    el.innerHTML='<div style="text-align:center;padding:30px;color:#aaa;font-size:13px">&#x1F446; เลือกชื่อของคุณด้านบน</div>';
+    return;
+  }
   var mine=orders.filter(function(o){ return o.name===name&&!o.__isOT&&(!date||o.date===date); });
-  if(!mine.length){ el.innerHTML='<div style="text-align:center;padding:24px;color:#aaa;font-size:12px">📭 ไม่มีใบงาน'+( date?" วันที่เลือก":""  )+'</div>'; return; }
-  /* Compute overall performance */
+  if(!mine.length){
+    el.innerHTML='<div style="text-align:center;padding:24px;color:#aaa;font-size:12px">&#x1F4ED; ไม่มีใบงาน'+(date?" วันที่เลือก":"")+'</div>';
+    return;
+  }
   var totalPct=0,totalJ=0;
   mine.forEach(function(o){ (o.jobs||[]).forEach(function(j){ totalPct+=j.pct||0; totalJ++; }); });
   var avgPct=totalJ?Math.round(totalPct/totalJ):0;
   var perfHtml="";
   if(totalJ>0){
-    if(avgPct>=80){ perfHtml='<div class="perf-badge-great"><div style="font-size:20px">🏆</div><div style="font-size:13px;font-weight:700;margin-top:4px">ยอดเยี่ยม! '+avgPct+'%</div><div style="font-size:11px;opacity:.9">คุณทำได้ดีมากวันนี้</div></div>'; }
-    else if(avgPct>=50){ perfHtml='<div class="perf-badge-warn"><div style="font-size:20px">⚠️</div><div style="font-size:13px;font-weight:700;margin-top:4px">พอใช้ '+avgPct+'%</div><div style="font-size:11px;opacity:.9">ยังมีงานที่ต้องทำต่อ กรุณาเร่งดำเนินการ</div></div>'; }
-    else if(avgPct>=0&&totalJ>0){ perfHtml='<div class="perf-badge-fail"><div style="font-size:20px">🚨</div><div style="font-size:13px;font-weight:700;margin-top:4px">ต้องปรับปรุง '+avgPct+'%</div><div style="font-size:11px;opacity:.9">งานยังไม่สำเร็จ กรุณาดำเนินการโดยด่วน!</div></div>'; }
+    if(avgPct>=80) perfHtml='<div class="perf-badge-great"><div style="font-size:18px">&#x1F3C6;</div><div style="font-size:13px;font-weight:700;margin-top:3px">ยอดเยี่ยม! '+avgPct+'%</div><div style="font-size:11px;opacity:.9">คุณทำได้ดีมาก!</div></div>';
+    else if(avgPct>=50) perfHtml='<div class="perf-badge-warn"><div style="font-size:18px">&#x26A0;&#xFE0F;</div><div style="font-size:13px;font-weight:700;margin-top:3px">พอใช้ '+avgPct+'%</div><div style="font-size:11px;opacity:.9">ยังมีงานที่ต้องทำต่อ</div></div>';
+    else perfHtml='<div class="perf-badge-fail"><div style="font-size:18px">&#x1F6A8;</div><div style="font-size:13px;font-weight:700;margin-top:3px">ต้องปรับปรุง '+avgPct+'%</div><div style="font-size:11px;opacity:.9">กรุณาดำเนินการด่วน!</div></div>';
   }
-  el.innerHTML=perfHtml+mine.sort(function(a,b){ return b.id-a.id; }).map(function(o){
-    var jobsHtml=(o.jobs||[]).map(function(j,ji){
-      var statObj=STAT_BY_KEY[j.status]||STAT_BY_KEY["progress"];
-      var statBtns=STAT_LIST.map(function(s,si){
+  var cards=mine.sort(function(a,b){ return b.id-a.id; }).map(function(o){
+    var jobItems=(o.jobs||[]).map(function(j,ji){
+      var pc=pctColor(j.pct||0);
+      var statBtnsHtml=STAT_LIST.map(function(s,si){
         var active=j.status===s.sk;
         var span2=si===4?"grid-column:span 2;":"";
-        var style=span2+(active?"background:"+s.bg+";border:2px solid "+s.bc+";":"background:#fff;border:2px solid #e2e8f0;"  )+"border-radius:10px;padding:9px 7px;text-align:center;cursor:pointer;";
-        var lStyle=active?"font-size:10px;font-weight:800;color:"+s.tc:"font-size:10px;font-weight:700;color:#888";
-        return "<div style='"+style+"' data-oid='"+o.id+"' data-ji='"+ji+"' data-sk='"+s.sk+"' onclick='myStatClick(this)'><span style='font-size:18px;display:block;margin-bottom:2px'>"+s.e+"</span><span style='"+lStyle+"'>"+s.l+"</span></div>";
-      }).join("");
-      return '<div style="padding:11px 12px;border-bottom:1px solid #f8fafc">'
-        +'<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700"><span class="jt jt-'+(j.jobtype||"JOB")+'">'+(j.jobtype||"JOB")+'</span>'+( j.no?j.no:""  )+(j.machine?' <span style="color:#888;font-weight:400">— '+j.machine+'</span>':"")+'</div>'
-        +'<div style="font-size:12px;font-weight:600;margin-top:3px">'+j.desc+'</div>'
-        +'<div style="font-size:10px;color:#888;margin-top:2px">⏰ '+(j.start||"-")+(j.end?" → "+j.end:"")+'</div></div>'
-        +'<div style="font-size:10px;font-weight:700;color:#666;text-transform:uppercase;margin-bottom:5px">อัพเดทสถานะ:</div>'
-        +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:9px">'+statBtns+'</div>'
+        var activeSt=active
+          ?"background:"+s.bg+";border:2.5px solid "+s.bc+";box-shadow:0 2px 8px rgba(0,0,0,.15);"
+          :"background:#f8fafc;border:1.5px solid #e2e8f0;";
+        var lc=active?"font-size:11px;font-weight:800;color:"+s.tc:"font-size:11px;font-weight:600;color:#888";
+        return '<div'
+          +' style="'+span2+activeSt+'border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;"'
+          +' data-oid="'+o.id+'"'
+          +' data-ji="'+ji+'"'
+          +' data-sk="'+s.sk+'"'
+          +' onclick="myStatClick(this)">'
+          +'<span style="font-size:22px;display:block;margin-bottom:4px">'+s.e+'</span>'
+          +'<span style="'+lc+'">'+s.l+'</span>'
+          +'</div>';
+      }).join('');
+      return '<div style="padding:13px 14px;border-bottom:1px solid #f0f4f8">'
+        +'<div style="margin-bottom:10px">'
+        +'<div style="font-size:12px;font-weight:700">'
+        +'<span class="jt jt-'+(j.jobtype||"JOB")+'">'+(j.jobtype||"JOB")+'</span>'
+        +(j.no?' <b>'+j.no+'</b>':'')
+        +(j.machine?' <span style="color:#888;font-weight:400">— '+j.machine+'</span>':'')
+        +'</div>'
+        +'<div style="font-size:13px;font-weight:600;margin-top:4px">'+j.desc+'</div>'
+        +'<div style="font-size:11px;color:#888;margin-top:3px">&#x23F0; '+(j.start||"-")+(j.end?" → "+j.end:"")+'</div>'
+        +'</div>'
+        +'<div style="font-size:10px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">&#x1F4CC; อัพเดทสถานะ</div>'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">'
+        +statBtnsHtml
+        +'</div>'
         +'<input type="hidden" id="mystat-'+o.id+'-'+ji+'" value="'+(j.status||'progress')+'">'
-        +'<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#666;margin-bottom:3px"><span>% ความสำเร็จ</span><span id="mpl-'+o.id+'-'+ji+'" style="color:'+pctColor(j.pct||0)+'">'+( j.pct||0  )+'%</span></div>'
-        +'<input type="range" min="0" max="100" step="5" value="'+(j.pct||0)+'" class="pct-sl" style="width:100%" data-oid="'+o.id+'" data-ji="'+ji+'" oninput="myPctInput(this,'+"'"+o.id+"'"+','+ji+')"></div>'
-        +'<div class="field"><label>ปัญหา / หมายเหตุ</label><textarea id="myissue-'+o.id+'-'+ji+'" class="fi" style="min-height:44px;font-size:11px">'+(j.issue||"")+'</textarea></div>'
-        +'<button onclick="myJobSave('+"'"+o.id+"'"+','+ji+')" style="width:100%;background:linear-gradient(135deg,var(--o),#d4661a);color:#fff;border:none;border-radius:9px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:\'Sarabun\',sans-serif;margin-top:5px" id="savebtn-'+o.id+'-'+ji+'">💾 บันทึกการอัพเดท</button>'
-        +(j.updatedAt?'<div style="text-align:center;font-size:9px;color:#aaa;margin-top:4px">อัพเดทล่าสุด: '+j.updatedAt+'</div>':"")
+        +'<div style="background:#f8fafc;border-radius:10px;padding:10px 12px;margin-bottom:10px">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
+        +'<span style="font-size:11px;font-weight:700;color:#555">% ความสำเร็จ</span>'
+        +'<span id="mpl-'+o.id+'-'+ji+'" style="font-size:14px;font-weight:800;color:'+pc+'">'+(j.pct||0)+'%</span>'
+        +'</div>'
+        +'<input type="range" min="0" max="100" step="5" value="'+(j.pct||0)+'"'
+        +' class="pct-sl" style="width:100%"'
+        +' id="mypct-'+o.id+'-'+ji+'"'
+        +' data-oid="'+o.id+'" data-ji="'+ji+'"'
+        +' oninput="myPctLive(this)">'
+        +'</div>'
+        +'<div style="margin-bottom:10px">'
+        +'<div style="font-size:11px;font-weight:700;color:#555;margin-bottom:4px">ปัญหา / หมายเหตุ</div>'
+        +'<textarea id="myissue-'+o.id+'-'+ji+'"'
+        +' style="width:100%;border:1.5px solid #e2e8f0;border-radius:8px;padding:8px 10px;font-size:12px;min-height:48px;resize:none;font-family:Sarabun,sans-serif;outline:none;">'
+        +(j.issue||'')
+        +'</textarea>'
+        +'</div>'
+        +'<button class="savebtn-my"'
+        +' data-oid="'+o.id+'"'
+        +' data-ji="'+ji+'"'
+        +' onclick="myJobSaveBtn(this)"'
+        +' id="savebtn-'+o.id+'-'+ji+'"'
+        +' style="width:100%;padding:14px;font-size:14px;font-weight:700;color:#fff;background:linear-gradient(135deg,#F07E26,#d4661a);border:none;border-radius:12px;cursor:pointer;font-family:Sarabun,sans-serif;box-shadow:0 4px 12px rgba(240,126,38,.35);-webkit-tap-highlight-color:transparent;">'
+        +'&#x1F4BE; บันทึกการอัพเดท'
+        +'</button>'
+        +(j.updatedAt?'<div style="text-align:center;font-size:10px;color:#aaa;margin-top:6px">&#x1F552; '+j.updatedAt+'</div>':"")
         +'</div>';
-    }).join("");
-    return '<div class="my-card"><div style="padding:10px 12px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:11px;font-weight:700;color:var(--o)">📅 '+dStr(o.date)+'</div>'+(o.note?'<div style="font-size:10px;color:#888;margin-top:1px">🚗 '+o.note+'</div>':"")+'</div><span style="font-size:9px;background:#f1f5f9;color:#555;padding:2px 6px;border-radius:7px">'+( o.dept||""  )+'</span></div>'+jobsHtml+'</div>';
-  }).join("");
+    }).join('');
+    return '<div class="my-card">'
+      +'<div style="padding:11px 13px;border-bottom:1px solid #f0f4f8;display:flex;justify-content:space-between;align-items:center">'
+      +'<div>'
+      +'<div style="font-size:12px;font-weight:700;color:var(--o)">&#x1F4C5; '+dStr(o.date)+'</div>'
+      +(o.note?'<div style="font-size:10px;color:#888;margin-top:1px">&#x1F697; '+o.note+'</div>':"")
+      +'</div>'
+      +'<span style="font-size:9px;background:#f1f5f9;color:#555;padding:2px 7px;border-radius:7px">'+(o.dept||"")+'</span>'
+      +'</div>'
+      +jobItems
+      +'</div>';
+  }).join('');
+  el.innerHTML=perfHtml+cards;
 }
 function myStatClick(btn){
   var oid=btn.getAttribute("data-oid");
   var ji=parseInt(btn.getAttribute("data-ji"));
   var sk=btn.getAttribute("data-sk");
-  mySetStat(oid,ji,sk);
-}
-function mySetStat(oid,ji,status){
   var o=orders.filter(function(x){ return String(x.id)===String(oid); })[0];
   if(!o||!o.jobs[ji]) return;
-  o.jobs[ji].status=status;
-  if(status==="done"){
-    o.jobs[ji].pct=100;
-    var pctEl=document.getElementById("mypct-"+oid+"-"+ji);
-    if(pctEl){ pctEl.value=100; myPctInput(pctEl,oid,ji); }
-  }
-  if(status==="waiting"){
-    o.jobs[ji].pct=0;
-    var pctEl2=document.getElementById("mypct-"+oid+"-"+ji);
-    if(pctEl2){ pctEl2.value=0; myPctInput(pctEl2,oid,ji); }
-  }
-  /* Update hidden status field */
+  o.jobs[ji].status=sk;
   var statEl=document.getElementById("mystat-"+oid+"-"+ji);
-  if(statEl) statEl.value=status;
-  /* Update button visuals without full reload */
-  var container=btn?btn.parentNode:null;
-  if(container){
-    var allBtns=container.querySelectorAll("[data-sk]");
-    allBtns.forEach(function(b){
-      var bsk=b.getAttribute("data-sk");
-      var s=STAT_LIST.filter(function(x){return x.sk===bsk;})[0];
-      if(!s) return;
-      var active=bsk===status;
-      var si=STAT_LIST.indexOf(s);
-      var span2=si===4?"grid-column:span 2;":"";
-      b.setAttribute("style",span2+(active?"background:"+s.bg+";border:2px solid "+s.bc+";":"background:#fff;border:2px solid #e2e8f0;")+"border-radius:10px;padding:9px 7px;text-align:center;cursor:pointer;");
-      var lbl=b.querySelector("span:last-child");
-      if(lbl) lbl.setAttribute("style",active?"font-size:10px;font-weight:800;color:"+s.tc:"font-size:10px;font-weight:700;color:#888");
-    });
+  if(statEl) statEl.value=sk;
+  if(sk==="done"){
+    o.jobs[ji].pct=100;
+    var pe=document.getElementById("mypct-"+oid+"-"+ji);
+    if(pe){ pe.value=100; myPctLive(pe); }
+  } else if(sk==="waiting"){
+    o.jobs[ji].pct=0;
+    var pe2=document.getElementById("mypct-"+oid+"-"+ji);
+    if(pe2){ pe2.value=0; myPctLive(pe2); }
   }
+  /* Update button colors INSTANTLY */
+  var grid=btn.parentNode;
+  if(!grid) return;
+  grid.querySelectorAll("[data-sk]").forEach(function(b){
+    var bsk=b.getAttribute("data-sk");
+    var s=null;
+    STAT_LIST.forEach(function(x){ if(x.sk===bsk) s=x; });
+    if(!s) return;
+    var si=STAT_LIST.indexOf(s);
+    var active=bsk===sk;
+    var span2=si===4?"grid-column:span 2;":"";
+    var activeSt=active
+      ?"background:"+s.bg+";border:2.5px solid "+s.bc+";box-shadow:0 2px 8px rgba(0,0,0,.15);"
+      :"background:#f8fafc;border:1.5px solid #e2e8f0;";
+    b.style.cssText=span2+activeSt+"border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;";
+    var spans=b.querySelectorAll("span");
+    if(spans.length>=2){
+      spans[1].style.cssText=active
+        ?"font-size:11px;font-weight:800;color:"+s.tc
+        :"font-size:11px;font-weight:600;color:#888";
+    }
+  });
 }
-function myPctInput(el,oid,ji){
+
+function mySetStat(oid,ji,status){
+  var btn=document.querySelector("[data-oid='"+oid+"'][data-ji='"+ji+"'][data-sk='"+status+"']");
+  if(btn) myStatClick(btn);
+}
+
+function myPctLive(el){
+  var oid=el.getAttribute("data-oid");
+  var ji=parseInt(el.getAttribute("data-ji"));
   var val=parseInt(el.value)||0;
   var lbl=document.getElementById("mpl-"+oid+"-"+ji);
   if(lbl){ lbl.textContent=val+"%"; lbl.style.color=pctColor(val); }
   var o=orders.filter(function(x){ return String(x.id)===String(oid); })[0];
-  if(o&&o.jobs[ji]) o.jobs[ji].pct=val;
+  if(o&&o.jobs&&o.jobs[ji]) o.jobs[ji].pct=val;
 }
+
+function myPctInput(el,oid,ji){
+  myPctLive(el);
+}
+
+function myJobSaveBtn(btn){
+  var oid=btn.getAttribute("data-oid");
+  var ji=parseInt(btn.getAttribute("data-ji"));
+  myJobSave(oid,ji);
+}
+
 function myJobSave(oid,ji){
   var o=orders.filter(function(x){ return String(x.id)===String(oid); })[0];
   if(!o){ toast("ไม่พบข้อมูลใบงาน","err"); return; }
-  /* Get issue text */
   var issueEl=document.getElementById("myissue-"+oid+"-"+ji);
   if(issueEl) o.jobs[ji].issue=issueEl.value;
-  /* Get pct from slider using id */
   var pctEl=document.getElementById("mypct-"+oid+"-"+ji);
   if(pctEl) o.jobs[ji].pct=parseInt(pctEl.value)||0;
-  /* Get status from hidden input */
   var statEl=document.getElementById("mystat-"+oid+"-"+ji);
   if(statEl) o.jobs[ji].status=statEl.value;
   o.jobs[ji].updatedAt=nowStr();
   o.updatedAt=nowStr();
-  setSyncUI("syn","กำลังบันทึก...");
+  var saveBtn=document.getElementById("savebtn-"+oid+"-"+ji);
+  if(saveBtn){ saveBtn.textContent="กำลังบันทึก..."; saveBtn.style.background="#9ca3af"; saveBtn.disabled=true; }
   saveOrder(o).then(function(){
-    toast("บันทึกแล้ว!");
-    /* Update dashboard if visible */
+    if(saveBtn){
+      saveBtn.textContent="✅ บันทึกสำเร็จ!";
+      saveBtn.style.background="#16a34a";
+      saveBtn.disabled=false;
+      setTimeout(function(){
+        if(saveBtn){ saveBtn.innerHTML="&#x1F4BE; บันทึกการอัพเดท"; saveBtn.style.background="linear-gradient(135deg,#F07E26,#d4661a)"; }
+      },2000);
+    }
     var dashView=$("view-dash");
     if(dashView&&dashView.classList.contains("active")) renderDash();
-    loadMyWork();
-  }).catch(function(e){ toast("บันทึกไม่สำเร็จ","err"); });
+  }).catch(function(){
+    toast("บันทึกไม่สำเร็จ","err");
+    if(saveBtn){ saveBtn.innerHTML="&#x1F4BE; บันทึกการอัพเดท"; saveBtn.style.background="linear-gradient(135deg,#F07E26,#d4661a)"; saveBtn.disabled=false; }
+  });
 }
 
 /* ---------- TEAM ---------- */
@@ -1705,14 +1786,12 @@ function loadOTApprove(){
     var allOTs=(d.orders||[]).filter(function(o){ return o.__isOT; });
     window._otCache={};
     allOTs.forEach(function(o){ window._otCache[String(o.id)]=o; });
-    /* date opts */
     var dates=[];
     allOTs.forEach(function(o){ if(o.date&&dates.indexOf(o.date)<0) dates.push(o.date); });
     dates.sort().reverse();
     var dOpts="<option value=''>ทุกวัน</option>";
     dates.forEach(function(dt){ dOpts+="<option value='"+dt+"'"+(fltDate===dt?" selected":"")+">"+dStr(dt)+"</option>"; });
     var dsel=$("ot-flt-date"); if(dsel) dsel.innerHTML=dOpts;
-    /* summary */
     var p=0,a=0,r=0,th=0;
     allOTs.forEach(function(o){
       if(o.status==="pending") p++;
@@ -1720,9 +1799,13 @@ function loadOTApprove(){
       else if(o.status==="rejected") r++;
     });
     var se=$("ot-apv-sum");
-    if(se) se.innerHTML="<div style='background:#fef9c3;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#854d0e'>รอ: "+p+"</div>"+"<div style='background:#dcfce7;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#15803d'>อนุมัติ: "+a+"</div>"+"<div style='background:#fee2e2;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#b91c1c'>ปฏิเสธ: "+r+"</div>"+"<div style='background:#f3e8ff;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#7e22ce'>รวม OT: "+th.toFixed(1)+"h</div>";
-    /* filter */
-    var ots=allOTs.filter(function(o){ return !fltDate||o.date===fltDate; }).filter(function(o){ return !fltStat||o.status===fltStat; }).sort(function(a2,b2){ return String(b2.id).localeCompare(String(a2.id)); });
+    if(se) se.innerHTML="<div style='background:#fef9c3;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#854d0e'>รอ: "+p+"</div>"
+      +"<div style='background:#dcfce7;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#15803d'>อนุมัติ: "+a+"</div>"
+      +"<div style='background:#fee2e2;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#b91c1c'>ปฏิเสธ: "+r+"</div>"
+      +"<div style='background:#f3e8ff;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#7e22ce'>รวม OT: "+th.toFixed(1)+"h</div>";
+    var ots=allOTs.filter(function(o){ return !fltDate||o.date===fltDate; })
+      .filter(function(o){ return !fltStat||o.status===fltStat; })
+      .sort(function(a2,b2){ return String(b2.id).localeCompare(String(a2.id)); });
     if(!ots.length){ el.innerHTML="<div style='text-align:center;padding:12px;color:#aaa;font-size:11px'>ไม่มีรายการ</div>"; return; }
     var rows="";
     ots.forEach(function(o,i){
@@ -1731,12 +1814,18 @@ function loadOTApprove(){
       var bd=o.status==="approved"?"#16a34a":o.status==="rejected"?"#dc2626":"#fde68a";
       var nid="otn"+i;
       rows+="<div style='background:"+bg+";border:1.5px solid "+bd+";border-radius:12px;padding:12px;margin-bottom:9px'>";
-      rows+="<div style='display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:8px'>";
+      rows+="<div style='display:flex;justify-content:space-between;gap:6px;margin-bottom:8px'>";
       rows+="<div><div style='font-size:13px;font-weight:700'>"+o.name+"<span class='dept-badge'>"+(o.dept||"")+"</span></div>";
       rows+="<div style='font-size:10px;color:#555;margin-top:2px'>"+dStr(o.date)+"</div>";
       rows+="<div style='font-size:11px;font-weight:700;color:#9333ea;margin-top:1px'>"+(o.start||"-")+" - "+(o.end||"-")+" = "+(o.otHours||"0")+" ชม.</div></div>";
-      rows+=(isPending?"<span style='background:#fef9c3;color:#854d0e;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700'>รอพิจารณา</span>":o.status==="approved"?"<span style='background:#dcfce7;color:#15803d;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700'>อนุมัติแล้ว</span>":"<span style='background:#fee2e2;color:#b91c1c;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700'>ไม่อนุมัติ</span>")+"</div>";
-      rows+="<div style='background:#f8fafc;border-radius:8px;padding:8px;margin-bottom:7px'><div style='font-size:12px;font-weight:600'>"+o.desc+"</div><div style='font-size:11px;color:#7e22ce;margin-top:2px'>"+o.reason+"</div>"+(o.no?"<div style='font-size:10px;color:#888;margin-top:2px'>"+o.no+(o.cust?" | "+o.cust:"")+"</div>":"")+"</div>";
+      rows+=(isPending?"<span style='background:#fef9c3;color:#854d0e;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700'>รอพิจารณา</span>"
+        :o.status==="approved"?"<span style='background:#dcfce7;color:#15803d;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700'>อนุมัติแล้ว</span>"
+        :"<span style='background:#fee2e2;color:#b91c1c;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700'>ไม่อนุมัติ</span>")+"</div>";
+      rows+="<div style='background:#f8fafc;border-radius:8px;padding:8px;margin-bottom:7px'>";
+      rows+="<div style='font-size:12px;font-weight:600'>"+o.desc+"</div>";
+      rows+="<div style='font-size:11px;color:#7e22ce;margin-top:2px'>"+o.reason+"</div>";
+      if(o.no) rows+="<div style='font-size:10px;color:#888;margin-top:2px'>"+o.no+(o.cust?" | "+o.cust:"")+"</div>";
+      rows+="</div>";
       if(o.approvedBy) rows+="<div style='font-size:10px;color:#555;padding:5px 8px;background:rgba(0,0,0,.04);border-radius:7px;margin-bottom:7px'>โดย: <b>"+o.approvedBy+"</b>"+(o.approveNote?" - "+o.approveNote:"")+"</div>";
       if(isPending){
         rows+="<div class='field' style='margin-bottom:7px'><label>หมายเหตุ</label><input id='"+nid+"' class='fi' style='font-size:12px'></div>";
@@ -1763,14 +1852,12 @@ function handleOTBtn(btn){
   if(!confirm("ยืนยัน "+label+"?")) return;
   var ex=window._otCache[String(oid)];
   if(!ex){ toast("ไม่พบรายการ","err"); return; }
-  apiCall("save",{order:Object.assign({},ex,{status:dec,approvedBy:approver,approveNote:note,approvedAt:nowStr()})}).then(function(){
-    toast("บันทึก"+label+"แล้ว!");
-    loadOTApprove();
-    loadOTList();
-  }).catch(function(){ toast("บันทึกไม่สำเร็จ","err"); });
+  apiCall("save",{order:Object.assign({},ex,{status:dec,approvedBy:approver,approveNote:note,approvedAt:nowStr()})})
+    .then(function(){ toast("บันทึก"+label+"แล้ว!"); loadOTApprove(); loadOTList(); })
+    .catch(function(){ toast("บันทึกไม่สำเร็จ","err"); });
 }
 
-/* ===== ONLINE PRESENCE ===== */
+/* ===== PRESENCE / ONLINE USERS ===== */
 var _presId="u"+Date.now()+"_"+Math.random().toString(36).substr(2,4);
 var _presName="";
 var _presBC=null;
@@ -1779,15 +1866,17 @@ var _presOthers={};
 function startPresence(name){
   if(!name) return;
   _presName=name;
-  try{ localStorage.setItem("marc_p_"+_presId, JSON.stringify({n:name,t:Date.now()})); cleanPres(); }catch(e){}
+  try{ localStorage.setItem("marc_p_"+_presId,JSON.stringify({n:name,t:Date.now()})); cleanPres(); }catch(e){}
   try{
     if(typeof BroadcastChannel!=="undefined"){
       if(!_presBC){
         _presBC=new BroadcastChannel("marc_pres");
         _presBC.onmessage=function(ev){
           var d=ev.data||{};
-          if(d.type==="hi"||d.type==="pong"){ _presOthers[d.id]=d.n; updateOnlineCount(); if(d.type==="hi"&&_presName) _presBC.postMessage({type:"pong",n:_presName,id:_presId}); }
-          else if(d.type==="bye"){ delete _presOthers[d.id]; updateOnlineCount(); }
+          if(d.type==="hi"||d.type==="pong"){
+            _presOthers[d.id]=d.n; updateOnlineCount();
+            if(d.type==="hi"&&_presName) _presBC.postMessage({type:"pong",n:_presName,id:_presId});
+          } else if(d.type==="bye"){ delete _presOthers[d.id]; updateOnlineCount(); }
         };
       }
       _presBC.postMessage({type:"hi",n:name,id:_presId});
@@ -1796,7 +1885,7 @@ function startPresence(name){
   updateOnlineCount();
   apiCall("save",{order:{id:"PRES_"+_presId,__isPresence:true,name:name,ts:Date.now()}}).catch(function(){});
   if(!window._presTimer) window._presTimer=setInterval(function(){
-    try{ localStorage.setItem("marc_p_"+_presId, JSON.stringify({n:_presName,t:Date.now()})); cleanPres(); }catch(e){}
+    try{ localStorage.setItem("marc_p_"+_presId,JSON.stringify({n:_presName,t:Date.now()})); cleanPres(); }catch(e){}
     updateOnlineCount();
     if(_presBC&&_presName) _presBC.postMessage({type:"hi",n:_presName,id:_presId});
     apiCall("save",{order:{id:"PRES_"+_presId,__isPresence:true,name:_presName,ts:Date.now()}}).catch(function(){});
@@ -1805,7 +1894,7 @@ function startPresence(name){
 
 function cleanPres(){
   try{
-    var now=Date.now(), exp=3*60*1000;
+    var now=Date.now(),exp=3*60*1000;
     Object.keys(localStorage).filter(function(k){ return k.startsWith("marc_p_"); }).forEach(function(k){
       try{ var d=JSON.parse(localStorage.getItem(k)); if(now-parseInt(d.t||0)>exp) localStorage.removeItem(k); }catch(e){ localStorage.removeItem(k); }
     });
@@ -1817,7 +1906,7 @@ function updateOnlineCount(){
   if(_presName) names[_presName]=1;
   Object.values(_presOthers).forEach(function(n){ if(n) names[n]=1; });
   try{
-    var now=Date.now(), exp=3*60*1000;
+    var now=Date.now(),exp=3*60*1000;
     Object.keys(localStorage).filter(function(k){ return k.startsWith("marc_p_"); }).forEach(function(k){
       try{ var d=JSON.parse(localStorage.getItem(k)); if(d&&d.n&&(now-parseInt(d.t||0))<exp) names[d.n]=1; }catch(e){} });
   }catch(e){}
@@ -1828,7 +1917,7 @@ function updateOnlineCount(){
 
 function loadOnline(){
   apiCall("getAll").then(function(d){
-    var now=Date.now(), exp=5*60*1000;
+    var now=Date.now(),exp=5*60*1000;
     var names={};
     if(_presName) names[_presName]=1;
     (d.orders||[]).filter(function(o){ return o.__isPresence&&(now-parseInt(o.ts||0))<exp; }).forEach(function(p){ if(p.name) names[p.name]=1; });
