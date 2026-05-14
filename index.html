@@ -332,35 +332,17 @@ textarea.fi{resize:vertical;min-height:50px}
   <div class="card">
     <div class="ct">📋 ข้อมูลงาน</div>
     <div class="r2">
-      <div class="field"><label>ประเภทงาน</label>
-        <select id="t-jtype" class="fi" onchange="onJtypeChange('t')">
-          <option value="JOB">JOB — ซ่อม/ติดตั้ง</option>
-          <option value="MT">MT — Maintenance</option>
-          <option value="NP">NP — Non-Productive</option>
-          <option value="LEAVE">LEAVE — ลางาน</option>
-        </select>
-      </div>
-      <div class="field"><label>เลขงาน</label>
-        <select id="t-no-sel" class="fi" onchange="onJobSelChange('t-no-sel','t-no','t-cust')">
-          <option value="">— เลือกจาก DB —</option>
-        </select>
-      </div>
-    </div>
-    <div class="r2">
-      <div class="field"><label>เลขงาน (พิมพ์เอง)</label><input id="t-no" class="fi" oninput="onJobNoInput('t-no','t-cust')"></div>
-      <div class="field"><label>ลูกค้า / สถานที่</label><input id="t-cust" class="fi"></div>
-    </div>
-    <div class="field"><label>รายละเอียดงาน</label><textarea id="t-desc" class="fi" style="min-height:55px"></textarea></div>
-    <div class="r3">
       <div class="field"><label>วันที่</label><input type="date" id="t-date" class="fi"></div>
-      <div class="field"><label>เริ่ม</label>
-        <div class="tsel"><select id="t-sh" class="fi"><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span class="tsep">:</span><select id="t-sm" class="fi"><option value="00">00</option><option value="15">15</option><option value="30">30</option><option value="45">45</option></select></div>
-      </div>
-      <div class="field"><label>สิ้นสุด</label>
-        <div class="tsel"><select id="t-eh" class="fi"><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span class="tsep">:</span><select id="t-em" class="fi"><option value="00">00</option><option value="15">15</option><option value="30">30</option><option value="45">45</option></select></div>
-      </div>
+      <div class="field"><label>หมายเหตุ / รถที่ใช้</label><input id="t-note" class="fi"></div>
     </div>
-    <div class="field"><label>หมายเหตุ / รถที่ใช้</label><input id="t-note" class="fi"></div>
+    <div style="overflow-x:auto">
+      <table class="jtbl" style="min-width:520px">
+        <thead><tr><th>ประเภท</th><th>เลขงาน</th><th>รายละเอียด</th><th>เริ่ม</th><th>สิ้นสุด</th><th>ชม.</th><th style="width:60px"></th></tr></thead>
+        <tbody id="t-tbody"><tr><td colspan="7" style="text-align:center;padding:13px;color:#aaa;font-size:11px">กดปุ่มด้านล่างเพื่อเพิ่มงาน</td></tr></tbody>
+      </table>
+    </div>
+    <button class="btn-dash" onclick="openJobModal('team')">+ เพิ่มรายการงาน</button>
+    <div style="display:flex;gap:6px;flex-wrap:wrap" id="t-pills"></div>
   </div>
   <div class="card">
     <div class="ct">👥 เลือกพนักงาน <span class="sel-cnt" id="t-cnt">0</span></div>
@@ -457,7 +439,7 @@ textarea.fi{resize:vertical;min-height:50px}
       </div>
     </div>
     <div style="background:#fce7f3;border:1px solid #f9a8d4;border-radius:8px;padding:9px;margin-bottom:8px;font-size:11px;color:#9d174d">
-      <b>⏰ เวลาปกติ:</b> 07:00 – 16:00 น. (พัก 11:00 – 11:59 น.)<br>
+      <b>⏰ เวลาปกติ:</b> 07:00 – 16:00 น. (พักเที่ยง 11:00-12:00 หรือ 12:00-13:00 หักอัตโนมัติ 1 ชม.)<br>
       <b>OT</b> คือเวลาที่เกินจาก 16:00 น. หรือก่อน 07:00 น.
     </div>
     <button class="btn btn-o btn-full" style="background:var(--p)" onclick="saveOT()">📤 ส่งขออนุมัติ OT</button>
@@ -817,6 +799,7 @@ var orders = [];
 var jobDB = [];
 var otRecords = []; /* Stores all OT records from API */
 var tempJobs = [];
+var teamJobs = [];
 var editJobIdx = null;
 var editingOrder = null;
 var editingJobs = [];
@@ -856,14 +839,14 @@ function alarm(jobs){
   return "ok";
 }
 
-/* Work hours: 07:00-16:00, lunch 11:00-11:59 */
+/* Work hours: 07:00-16:00, lunch 11:00-12:00 or 12:00-13:00 (max 1h deducted) */
 function calcWorkH(s,e){
   var a=toMin(s),b=toMin(e); if(a===null||b===null||b<=a) return 0;
-  var wStart=7*60, wEnd=16*60, lStart=11*60, lEnd=12*60;
+  var wStart=7*60, wEnd=16*60, lStart=11*60, lEnd=13*60;
   var start=Math.max(a,wStart), end=Math.min(b,wEnd);
   if(start>=end) return 0;
   var mins=end-start;
-  if(start<lEnd && end>lStart) mins-=Math.min(end,lEnd)-Math.max(start,lStart);
+  if(start<lEnd && end>lStart) mins-=Math.min(60, Math.min(end,lEnd)-Math.max(start,lStart));
   return Math.max(0,mins/60);
 }
 function calcOTH(s,e){
@@ -1223,25 +1206,36 @@ function updateTeamPreview(){
   el.innerHTML=html;
 }
 ["t-no","t-cust","t-desc"].forEach(function(id){ var el=$(id); if(el) el.addEventListener("input",updateTeamPreview); });
+function renderTeamTable(){
+  var tbody=$("t-tbody"); if(!tbody) return;
+  if(!teamJobs.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:13px;color:#aaa;font-size:11px">กดปุ่มด้านล่างเพื่อเพิ่มงาน</td></tr>'; $("t-pills").innerHTML=""; return; }
+  var html="";
+  teamJobs.forEach(function(j,i){
+    var h=calcH(j.start,j.end);
+    html+='<tr><td><span class="jt jt-'+(j.jobtype||"JOB")+'">'+(j.jobtype||"JOB")+'</span></td><td><b style="font-size:10px">'+(j.no||"-")+'</b></td><td style="font-size:11px">'+j.desc+(j.machine?'<br><span style="font-size:10px;color:#888">'+j.machine+'</span>':"")+'</td><td style="font-size:11px">'+(j.start||"-")+'</td><td style="font-size:11px">'+(j.end||"-")+'</td><td style="font-size:11px">'+(h||"-")+'</td><td><button class="btn btn-b" style="padding:2px 5px;font-size:10px;margin-bottom:2px" onclick="openJobModal(\'team\','+i+')">✏</button> <button class="btn btn-r" style="padding:2px 5px;font-size:10px" onclick="teamJobs.splice('+i+',1);renderTeamTable()">✕</button></td></tr>';
+  });
+  tbody.innerHTML=html;
+  var w=0; teamJobs.forEach(function(j){ var a=toMin(j.start),b=toMin(j.end); if(a!==null&&b!==null&&b>a) w+=(b-a)/60; });
+  $("t-pills").innerHTML='<div style="background:#dcfce7;color:#15803d;border-radius:7px;padding:5px 9px;font-size:11px;font-weight:700">⏱ '+w.toFixed(1)+' ชม.</div><div style="background:#dbeafe;color:#1d4ed8;border-radius:7px;padding:5px 9px;font-size:11px;font-weight:700">📋 '+teamJobs.length+' งาน</div>';
+}
 function saveTeam(){
   var names=Object.keys(selEmps).filter(function(k){ return selEmps[k]; });
   if(!names.length){ toast("กรุณาเลือกพนักงาน","err"); return; }
   var date=$("t-date").value; if(!date){ toast("กรุณาระบุวันที่","err"); return; }
-  var desc=$("t-desc").value.trim(); if(!desc){ toast("กรุณาระบุรายละเอียดงาน","err"); return; }
-  var jtype=$("t-jtype").value||"JOB";
-  var no=$("t-no").value.trim(), cust=$("t-cust").value.trim();
-  var start=getTV("t-sh","t-sm"), end=getTV("t-eh","t-em");
+  if(!teamJobs.length){ toast("กรุณาเพิ่มรายการงานอย่างน้อย 1 รายการ","err"); return; }
   var note=$("t-note").value.trim();
   var chain=Promise.resolve();
   names.forEach(function(name,i){
     chain=chain.then(function(){
-      return saveOrder({id:Date.now()+i,name:name,dept:findDept(name),empId:"",empType:"Permanent",date:date,note:note,jobs:[{no:no,machine:cust,desc:desc,start:start,end:end,status:"progress",jobtype:jtype,issue:"",pct:0}],createdAt:nowStr()});
+      return saveOrder({id:Date.now()+i,name:name,dept:findDept(name),empId:"",empType:"Permanent",date:date,note:note,jobs:teamJobs.slice(),createdAt:nowStr()});
     });
   });
   chain.then(function(){
     selEmps={};
-    ["t-no","t-cust","t-desc","t-note"].forEach(function(id){ var el=$(id); if(el) el.value=""; });
+    teamJobs=[];
+    var tn=$("t-note"); if(tn) tn.value="";
     renderTeamPicker();
+    renderTeamTable();
     toast("✅ สร้างใบงาน "+names.length+" ใบสำเร็จ!");
     sw("list");
   }).catch(function(){ toast("บันทึกไม่สำเร็จ","err"); });
@@ -1314,6 +1308,7 @@ function openJobModal(mode,idx){
   refreshJobSelects();
   var j=null;
   if(mode==="form"&&idx!==undefined) j=tempJobs[idx];
+  if(mode==="team"&&idx!==undefined) j=teamJobs[idx];
   if(mode==="edit"&&idx!==undefined) j=editingJobs[idx];
   if(j){
     $("jm-jtype").value=j.jobtype||"JOB"; onJtypeChange("jm");
@@ -1338,6 +1333,9 @@ function confirmJob(){
   if(jobModalMode==="edit"){
     if(editJobModalIdx!==null) editingJobs[editJobModalIdx]=j; else editingJobs.push(j);
     closeJobModal(); renderEditJobTable();
+  } else if(jobModalMode==="team"){
+    if(editJobIdx!==null) teamJobs[editJobIdx]=j; else teamJobs.push(j);
+    closeJobModal(); renderTeamTable();
   } else {
     if(editJobIdx!==null) tempJobs[editJobIdx]=j; else tempJobs.push(j);
     closeJobModal(); renderFormTable();
@@ -2033,10 +2031,10 @@ function tsInit(){
 
 function calcWorkH(s,e){
   var a=toMin(s),b=toMin(e); if(a===null||b===null||b<=a) return 0;
-  var wS=7*60,wE=16*60,lS=11*60,lE=12*60;
+  var wS=7*60,wE=16*60,lS=11*60,lE=13*60;
   var st=Math.max(a,wS),en=Math.min(b,wE); if(st>=en) return 0;
   var mins=en-st;
-  if(st<lE&&en>lS) mins-=Math.min(en,lE)-Math.max(st,lS);
+  if(st<lE&&en>lS) mins-=Math.min(60,Math.min(en,lE)-Math.max(st,lS));
   return Math.max(0,mins/60);
 }
 function calcOTH(s,e){
@@ -2367,16 +2365,13 @@ function doRenderTS(area,dept,date,dayEn,dateDisp,approvedOTs,foreman,supervisor
 }
 /* Local helpers for TS (avoid conflict) */
 function calcWorkHLocal(s,e){
-  /* Work hours = time within 07:00-16:00 window, minus lunch 11:00-12:00 */
-  /* Example: 15:30-16:30 = 0.5h work (15:30-16:00) + 0.5h OT (16:00-16:30) */
+  /* Work hours = time within 07:00-16:00 window, minus lunch 11:00-12:00 or 12:00-13:00 (max 1h) */
   var a=toMin(s),b=toMin(e); if(a===null||b===null||b<=a) return 0;
-  var wS=7*60, wE=16*60, lS=11*60, lE=12*60;
-  /* Clamp to work window */
+  var wS=7*60, wE=16*60, lS=11*60, lE=13*60;
   var st=Math.max(a,wS), en=Math.min(b,wE);
   if(st>=en) return 0;
   var mins=en-st;
-  /* Subtract lunch if crossed */
-  if(st<lE&&en>lS) mins-=Math.min(en,lE)-Math.max(st,lS);
+  if(st<lE&&en>lS) mins-=Math.min(60,Math.min(en,lE)-Math.max(st,lS));
   return Math.max(0,mins/60);
 }
 function calcOTHLocal(s,e){
